@@ -72,9 +72,9 @@ pub fn build_parameter_node(hash: &yaml::Hash) -> Option<ParameterNode> {
     let name: String = get_value(hash, "name").expect("Invalid parameter name");
     let schema_name = format!("{name}_schema");
     let schema = hash
-        .get(&yaml::Yaml::String("schema".to_string()))
+        .get(&Yaml::String("schema".to_string()))
         .and_then(|v| v.as_hash())
-        .and_then(|h| build_data_model_node(h, None))
+        .and_then(|h| build_data_model_node(h, Some(schema_name)))
         .expect("Invalid parameter schema");
 
     let parameter_enum = hash

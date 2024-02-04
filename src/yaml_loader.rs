@@ -15,7 +15,7 @@ pub struct YamlDirectory {
     pub children: Box<Vec<YamlNode>>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct YamlFile {
     pub path: PathBuf,
     pub content: Box<Vec<Yaml>>,

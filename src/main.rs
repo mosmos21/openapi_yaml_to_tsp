@@ -1,5 +1,6 @@
 mod openapi_parser;
 mod yaml_loader;
+mod compiler;
 
 use std::fmt::Debug;
 use std::fs::{self, File};
@@ -20,11 +21,7 @@ fn main() {
     let root_dir = fs::canonicalize(args[1].clone()).unwrap();
     dbg!(&root_dir);
 
-    let files = yaml_loader::load_yaml(&root_dir).flatten_files();
-    let result = files
-        .into_iter()
-        .map(|file| openapi_parser::parse_yaml_file(file))
-        .collect::<Vec<_>>();
+    let nodes = compiler::compile(&root_dir);
 
-    write_log("openapi_node.log", &result);
+    write_log("openapi_node.log", &nodes);
 }
