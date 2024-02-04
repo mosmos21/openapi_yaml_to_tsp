@@ -1,4 +1,11 @@
 use crate::openapi_parser::common::{check_unexpected_keys, get_value};
+use crate::openapi_parser::node::operation_node::reqeust_body_node::{
+    build_request_body_node, RequestBodyNode,
+};
+use crate::openapi_parser::node::operation_node::response_node::{
+    build_response_nodes, ResponseNode,
+};
+use crate::openapi_parser::node::operation_node::{build_parameters_node, ParameterNode};
 use crate::openapi_parser::parser::OpenAPINode;
 use std::path::PathBuf;
 use yaml_rust::{yaml, Yaml};
@@ -47,7 +54,15 @@ pub struct OperationNode {
     #[allow(dead_code)]
     description: Option<String>,
     #[allow(dead_code)]
-    tags: Option<Vec<String>>,
+    tags: Box<Vec<String>>,
+    #[allow(dead_code)]
+    securities: Box<Vec<yaml::Hash>>,
+    #[allow(dead_code)]
+    parameters: Box<Vec<ParameterNode>>,
+    #[allow(dead_code)]
+    request_body: Option<RequestBodyNode>,
+    #[allow(dead_code)]
+    responses: Box<Vec<ResponseNode>>,
 }
 
 const EXPECTED_KEYS: [&'static str; 8] = [
@@ -57,8 +72,8 @@ const EXPECTED_KEYS: [&'static str; 8] = [
     "tags",
     "security",
     "parameters",
-    "responses",
     "requestBody",
+    "responses",
 ];
 
 fn build_tags(hash: &yaml::Hash) -> Option<Vec<String>> {
@@ -68,6 +83,16 @@ fn build_tags(hash: &yaml::Hash) -> Option<Vec<String>> {
             v.iter()
                 .map(|v| v.as_str().map(|s| s.to_string()))
                 .collect()
+        })
+}
+
+fn build_securities(hash: &yaml::Hash) -> Option<Vec<yaml::Hash>> {
+    hash.get(&Yaml::String("security".to_string()))
+        .and_then(|v| v.as_vec())
+        .and_then(|v| {
+            v.iter()
+                .map(|v| v.as_hash().map(|h| h.clone()))
+                .collect::<Option<Vec<_>>>()
         })
 }
 
@@ -83,12 +108,31 @@ fn build_operation_node(hash: &yaml::Hash) -> Option<OpenAPINode> {
         if let Some(operation) = hash.get(&op).and_then(|v| v.as_hash()) {
             check_unexpected_keys(EXPECTED_KEYS.to_vec(), operation);
 
+            let parameters = operation
+                .get(&Yaml::String("parameters".to_string()))
+                .and_then(|v| v.as_vec())
+                .and_then(|v| build_parameters_node(v));
+
+            let request_body = operation
+                .get(&Yaml::String("requestBody".to_string()))
+                .and_then(|v| v.as_hash())
+                .and_then(|h| build_request_body_node(h));
+
+            let responses = operation
+                .get(&Yaml::String("responses".to_string()))
+                .and_then(|v| v.as_hash())
+                .and_then(build_response_nodes);
+
             return Some(OpenAPINode::Operation(OperationNode {
                 op: Operation::from_str(op.as_str().unwrap()),
                 summary: get_value(operation, "summary"),
                 operation_id: get_value(operation, "operationId"),
                 description: get_value(operation, "description"),
-                tags: build_tags(operation),
+                tags: Box::new(build_tags(operation).unwrap_or(Vec::new())),
+                securities: Box::new(build_securities(operation).unwrap_or(Vec::new())),
+                parameters: Box::new(parameters.unwrap_or(Vec::new())),
+                request_body,
+                responses: Box::new(responses.unwrap_or(Vec::new())),
             }));
         }
     }

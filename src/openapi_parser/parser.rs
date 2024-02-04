@@ -3,8 +3,9 @@ use crate::openapi_parser::node::{
     example_node::{parse_example_content, ExampleNode},
     info_node::{parse_info_content, InfoNode},
     metadata_node::{parse_metadata_content, MetadataNode},
-    operation_node::{parse_operation_content, OperationNode},
-    parameter_node::{parse_parameters_content, ParametersNode},
+    operation_node::{
+        parse_operation_content, parse_parameters_content, OperationNode, ParameterNode,
+    },
     path_node::{parse_paths_content, PathNode},
     server_node::{parse_servers_content, ServerNode},
     tag_node::{parse_tags_content, TagNode},
@@ -29,7 +30,7 @@ pub enum OpenAPINode {
     Paths(Box<Vec<PathNode>>),
     Operation(OperationNode),
     DataModel(DataModelNode),
-    Parameters(ParametersNode),
+    Parameters(Box<Vec<ParameterNode>>),
     Example(ExampleNode),
     Unknown(Box<yaml::Hash>),
 }

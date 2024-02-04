@@ -4,6 +4,7 @@ use yaml_rust::{yaml, Yaml};
 pub fn check_unexpected_keys(keys: Vec<&str>, hash: &yaml::Hash) {
     for (k, _) in hash.iter() {
         if !keys.contains(&k.as_str().unwrap()) {
+            dbg!(hash);
             panic!("unexpected key: {}", k.as_str().unwrap());
         }
     }

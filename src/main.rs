@@ -17,10 +17,7 @@ fn write_log<T: Debug>(log_file_name: &str, content: &T) {
 
 fn main() {
     let args = std::env::args().collect::<Vec<_>>();
-
-    let root_path = args[1].as_str();
-    dbg!(&root_path);
-    let root_dir = fs::canonicalize(root_path).unwrap();
+    let root_dir = fs::canonicalize(args[1].clone()).unwrap();
     dbg!(&root_dir);
 
     let files = yaml_loader::load_yaml(&root_dir).flatten_files();
