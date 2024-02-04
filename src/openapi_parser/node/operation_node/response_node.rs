@@ -1,6 +1,7 @@
 use crate::openapi_parser::common::get_value;
 use crate::openapi_parser::node::data_model_node::{build_data_model_node, DataModelNode};
 use crate::openapi_parser::node::operation_node::content_type::ContentType;
+use std::collections::HashMap;
 use std::str::FromStr;
 use yaml_rust::{yaml, Yaml};
 
@@ -14,6 +15,8 @@ pub struct ResponseNode {
     content_type: Option<ContentType>,
     #[allow(dead_code)]
     schema: Option<DataModelNode>,
+    #[allow(dead_code)]
+    examples: Option<Box<HashMap<String, Yaml>>>,
 }
 
 #[derive(Debug)]
@@ -52,6 +55,12 @@ impl FromStr for ResponseStatus {
     }
 }
 
+fn build_examples(hash: &yaml::Hash) -> HashMap<String, Yaml> {
+    hash.iter()
+        .map(|(k, v)| (k.as_str().unwrap().to_string(), v.clone()))
+        .collect()
+}
+
 fn build_response_node((status, yaml): (&Yaml, &Yaml)) -> Option<ResponseNode> {
     if let (Some(status), Some(hash)) = (status.as_str(), yaml.as_hash()) {
         let content = hash
@@ -69,12 +78,18 @@ fn build_response_node((status, yaml): (&Yaml, &Yaml)) -> Option<ResponseNode> {
             .and_then(|c| c.get(&Yaml::String("schema".to_string())))
             .and_then(|y| y.as_hash())
             .and_then(|h| build_data_model_node(h, None));
+        let examples = content_inner
+            .and_then(|c| c.get(&Yaml::String("examples".to_string())))
+            .and_then(|y| y.as_hash())
+            .map(build_examples)
+            .map(Box::new);
 
         Some(ResponseNode {
             status: ResponseStatus::from_str(status).expect("Invalid response status"),
             description: get_value(hash, "description"),
             content_type,
             schema,
+            examples,
         })
     } else {
         None
