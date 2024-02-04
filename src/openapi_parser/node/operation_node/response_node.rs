@@ -68,7 +68,7 @@ fn build_response_node((status, yaml): (&Yaml, &Yaml)) -> Option<ResponseNode> {
         let schema = content_inner
             .and_then(|c| c.get(&Yaml::String("schema".to_string())))
             .and_then(|y| y.as_hash())
-            .and_then(|h| build_data_model_node(&"".to_string(), h));
+            .and_then(|h| build_data_model_node(h, None));
 
         Some(ResponseNode {
             status: ResponseStatus::from_str(status).expect("Invalid response status"),

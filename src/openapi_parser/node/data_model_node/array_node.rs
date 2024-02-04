@@ -12,7 +12,7 @@ pub fn build_array_node(hash: &yaml::Hash) -> Option<DataModelNode> {
         .get(&yaml::Yaml::String("items".to_string()))
         .and_then(|yaml| yaml.as_hash())
     {
-        if let Some(node) = build_data_model_node(&"".to_string(), items) {
+        if let Some(node) = build_data_model_node(items, None) {
             Some(DataModelNode::Array(ArrayNode {
                 items: Box::new(node),
             }))

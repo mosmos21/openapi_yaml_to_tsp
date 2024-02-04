@@ -26,8 +26,8 @@ pub enum DataModelNode {
     Ref(RefNode),
 }
 
-pub fn build_data_model_node(hash_key: &String, hash: &yaml::Hash) -> Option<DataModelNode> {
-    if let Some(node) = build_object_node(hash_key, hash) {
+pub fn build_data_model_node(hash: &yaml::Hash, title: Option<String>) -> Option<DataModelNode> {
+    if let Some(node) = build_object_node(hash, title) {
         return Some(node);
     }
 
@@ -54,13 +54,13 @@ pub fn parse_data_model_content(
     hash: yaml::Hash,
     path: &PathBuf,
 ) -> (Option<Vec<OpenAPINode>>, yaml::Hash) {
-    let ref key = path
+    let key = path
         .file_name()
         .and_then(|f| f.to_str())
-        .unwrap()
+        .expect("invalid file name")
         .replace(".yaml", "");
 
-    if let Some(node) = build_data_model_node(key, &hash) {
+    if let Some(node) = build_data_model_node(&hash, Some(key)) {
         (Some(vec![OpenAPINode::DataModel(node)]), yaml::Hash::new())
     } else {
         (None, hash)
@@ -85,7 +85,7 @@ pub fn parse_data_models_content(
 
         for (key, value) in components.iter() {
             if let (Yaml::String(key), Yaml::Hash(value)) = (key, value) {
-                if let Some(node) = build_data_model_node(key, value) {
+                if let Some(node) = build_data_model_node(value, Some(key.clone())) {
                     nodes.push(node);
                 } else {
                     dbg!(path, key, value);

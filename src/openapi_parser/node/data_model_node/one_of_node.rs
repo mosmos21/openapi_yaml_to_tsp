@@ -17,7 +17,7 @@ pub fn build_one_of_node(hash: &yaml::Hash) -> Option<DataModelNode> {
         let mut items = vec![];
         for item in array {
             if let yaml::Yaml::Hash(hash) = item {
-                if let Some(node) = build_data_model_node(&"".to_string(), hash) {
+                if let Some(node) = build_data_model_node(hash, None) {
                     items.push(node);
                 } else {
                     panic!("unexpected oneOf item: {:?}", item);

@@ -6,7 +6,7 @@ use yaml_rust::{yaml, Yaml};
 #[derive(Debug)]
 pub struct ObjectNode {
     #[allow(dead_code)]
-    title: String,
+    title: Option<String>,
     #[allow(dead_code)]
     properties: Box<Vec<PropertyNode>>,
     #[allow(dead_code)]
@@ -68,7 +68,7 @@ fn get_properties(hash: &yaml::Hash) -> Vec<PropertyNode> {
     let mut result = vec![];
     for (key, value) in properties.iter() {
         if let (Yaml::String(key), Yaml::Hash(property)) = (key, value) {
-            if let Some(node) = build_data_model_node(key, property) {
+            if let Some(node) = build_data_model_node(property, Some(key.clone())) {
                 result.push(PropertyNode {
                     key: key.clone(),
                     value: node,
@@ -87,7 +87,7 @@ fn get_properties(hash: &yaml::Hash) -> Vec<PropertyNode> {
     result
 }
 
-pub fn build_object_node(hash_key: &String, hash: &yaml::Hash) -> Option<DataModelNode> {
+pub fn build_object_node(hash: &yaml::Hash, title: Option<String>) -> Option<DataModelNode> {
     if Some("object".to_string()) != get_value(hash, "type")
         && !hash.contains_key(&Yaml::String(String::from("properties")))
     {
@@ -106,18 +106,12 @@ pub fn build_object_node(hash_key: &String, hash: &yaml::Hash) -> Option<DataMod
     if x_examples.is_some() && example.is_some() {
         panic!("x-examples and example cannot be used together");
     }
-    // TODO: 複数の場合がありそう
-    let example = if x_examples.is_some() {
-        x_examples
-    } else {
-        example
-    };
 
     Some(DataModelNode::Object(ObjectNode {
-        title: get_value(hash, "title").unwrap_or(hash_key.clone()),
+        title: get_value(hash, "title").or(title),
         properties: Box::new(get_properties(hash)),
         nullable: get_value(hash, "nullable"),
         description: get_value(hash, "description"),
-        example,
+        example: x_examples.or(example),
     }))
 }

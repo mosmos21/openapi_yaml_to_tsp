@@ -29,7 +29,7 @@ pub fn build_request_body_node(hash: &yaml::Hash) -> Option<RequestBodyNode> {
         let schema = content
             .get(&yaml::Yaml::String("schema".to_string()))
             .and_then(|v| v.as_hash())
-            .and_then(|h| build_data_model_node(&"".to_string(), h))
+            .and_then(|h| build_data_model_node(h, None))
             .expect("Invalid schema");
         let examples = content
             .get(&Yaml::String("examples".to_string()))
