@@ -1,6 +1,6 @@
+mod compiler;
 mod openapi_parser;
 mod yaml_loader;
-mod compiler;
 
 use std::fmt::Debug;
 use std::fs::{self, File};
