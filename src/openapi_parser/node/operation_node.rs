@@ -1,0 +1,110 @@
+use crate::openapi_parser::common::{check_unexpected_keys, get_value};
+use crate::openapi_parser::parser::OpenAPINode;
+use std::path::PathBuf;
+use yaml_rust::{yaml, Yaml};
+
+#[derive(Debug)]
+pub enum Operation {
+    Get,
+    Post,
+    Put,
+    Delete,
+    Patch,
+}
+
+impl Operation {
+    fn from_str(op: &str) -> Self {
+        match op {
+            "get" => Operation::Get,
+            "post" => Operation::Post,
+            "put" => Operation::Put,
+            "delete" => Operation::Delete,
+            "patch" => Operation::Patch,
+            _ => panic!("[Operation::from_str] invalid operation"),
+        }
+    }
+    fn as_yaml_str(&self) -> Yaml {
+        let str = match self {
+            Operation::Get => "get",
+            Operation::Post => "post",
+            Operation::Put => "put",
+            Operation::Delete => "delete",
+            Operation::Patch => "patch",
+        };
+
+        Yaml::String(String::from(str))
+    }
+}
+
+#[derive(Debug)]
+pub struct OperationNode {
+    #[allow(dead_code)]
+    op: Operation,
+    #[allow(dead_code)]
+    summary: Option<String>,
+    #[allow(dead_code)]
+    operation_id: Option<String>,
+    #[allow(dead_code)]
+    description: Option<String>,
+    #[allow(dead_code)]
+    tags: Option<Vec<String>>,
+}
+
+const EXPECTED_KEYS: [&'static str; 8] = [
+    "summary",
+    "operationId",
+    "description",
+    "tags",
+    "security",
+    "parameters",
+    "responses",
+    "requestBody",
+];
+
+fn build_tags(hash: &yaml::Hash) -> Option<Vec<String>> {
+    hash.get(&Yaml::String("tags".to_string()))
+        .and_then(|v| v.as_vec())
+        .and_then(|v| {
+            v.iter()
+                .map(|v| v.as_str().map(|s| s.to_string()))
+                .collect()
+        })
+}
+
+fn build_operation_node(hash: &yaml::Hash) -> Option<OpenAPINode> {
+    let ops = [
+        Yaml::String(String::from("get")),
+        Yaml::String(String::from("post")),
+        Yaml::String(String::from("put")),
+        Yaml::String(String::from("delete")),
+        Yaml::String(String::from("patch")),
+    ];
+    for op in ops {
+        if let Some(operation) = hash.get(&op).and_then(|v| v.as_hash()) {
+            check_unexpected_keys(EXPECTED_KEYS.to_vec(), operation);
+
+            return Some(OpenAPINode::Operation(OperationNode {
+                op: Operation::from_str(op.as_str().unwrap()),
+                summary: get_value(operation, "summary"),
+                operation_id: get_value(operation, "operationId"),
+                description: get_value(operation, "description"),
+                tags: build_tags(operation),
+            }));
+        }
+    }
+
+    None
+}
+
+pub fn parse_operation_content(
+    mut hash: yaml::Hash,
+    _: &PathBuf,
+) -> (Option<Vec<OpenAPINode>>, yaml::Hash) {
+    if let Some(OpenAPINode::Operation(node)) = build_operation_node(&hash) {
+        let _ = hash.remove(&node.op.as_yaml_str());
+
+        (Some(vec![OpenAPINode::Operation(node)]), hash)
+    } else {
+        (None, hash)
+    }
+}
