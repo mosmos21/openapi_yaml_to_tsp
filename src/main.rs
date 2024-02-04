@@ -2,6 +2,7 @@ mod compiler;
 mod openapi_parser;
 mod yaml_loader;
 
+use compiler::Compiler;
 use std::fmt::Debug;
 use std::fs::{self, File};
 use std::io::Write;
@@ -21,7 +22,8 @@ fn main() {
     let root_dir = fs::canonicalize(args[1].clone()).unwrap();
     dbg!(&root_dir);
 
-    let nodes = compiler::compile(&root_dir);
+    let mut compiler = Compiler::new();
+    let nodes = compiler.compile(&root_dir);
 
     write_log("openapi_node.log", &nodes);
 }

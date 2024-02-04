@@ -5,16 +5,15 @@ use yaml_rust::{yaml, Yaml};
 
 #[derive(Debug)]
 pub struct ObjectNode {
+    pub title: Option<String>,
     #[allow(dead_code)]
-    title: Option<String>,
+    pub properties: Box<Vec<PropertyNode>>,
     #[allow(dead_code)]
-    properties: Box<Vec<PropertyNode>>,
+    pub nullable: Option<bool>,
     #[allow(dead_code)]
-    nullable: Option<bool>,
+    pub description: Option<String>,
     #[allow(dead_code)]
-    description: Option<String>,
-    #[allow(dead_code)]
-    example: Option<yaml::Hash>,
+    pub example: Option<yaml::Hash>,
 }
 
 #[derive(Debug)]

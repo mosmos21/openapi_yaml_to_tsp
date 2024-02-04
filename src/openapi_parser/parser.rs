@@ -78,10 +78,10 @@ fn parse_yaml_content(mut hash: yaml::Hash, path: &PathBuf) -> Vec<OpenAPINode> 
     result
 }
 
-pub fn parse_yaml_file(file: YamlFile) -> OpenAPIFileNode {
+fn parse_yaml_file(file: &YamlFile) -> OpenAPIFileNode {
     assert_eq!(file.content.len(), 1);
 
-    let path = file.path;
+    let path = file.path.clone();
     let hash = file
         .content
         .get(0)
@@ -94,4 +94,8 @@ pub fn parse_yaml_file(file: YamlFile) -> OpenAPIFileNode {
         path,
         content: Box::new(content),
     }
+}
+
+pub fn parse_yaml_files(files: &Vec<YamlFile>) -> Vec<OpenAPIFileNode> {
+    files.into_iter().map(parse_yaml_file).collect()
 }
