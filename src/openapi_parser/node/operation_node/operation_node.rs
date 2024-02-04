@@ -1,5 +1,5 @@
 use crate::openapi_parser::common::{check_unexpected_keys, get_value};
-use crate::openapi_parser::node::operation_node::reqeust_body_node::{
+use crate::openapi_parser::node::operation_node::request_body_node::{
     build_request_body_node, RequestBodyNode,
 };
 use crate::openapi_parser::node::operation_node::response_node::{
