@@ -1,7 +1,7 @@
 use crate::openapi_parser::node::data_model_node::{build_data_model_node, DataModelNode};
 use yaml_rust::yaml;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ArrayNode {
     #[allow(dead_code)]
     items: Box<DataModelNode>,

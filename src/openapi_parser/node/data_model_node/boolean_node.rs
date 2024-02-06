@@ -2,7 +2,7 @@ use crate::openapi_parser::common::{check_unexpected_keys, get_value};
 use crate::openapi_parser::node::data_model_node::DataModelNode;
 use yaml_rust::yaml;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BooleanNode {
     #[allow(dead_code)]
     default: Option<bool>,

@@ -1,19 +1,19 @@
 use crate::openapi_parser::node::data_model_node::DataModelNode;
 use yaml_rust::{yaml, Yaml};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum RefNode {
     ComponentRef(ComponentRefNode),
     FileRef(FileRefNode),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ComponentRefNode {
     #[allow(dead_code)]
     component_name: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FileRefNode {
     #[allow(dead_code)]
     file_path: String,

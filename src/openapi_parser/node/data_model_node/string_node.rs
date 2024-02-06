@@ -3,7 +3,7 @@ use crate::openapi_parser::node::data_model_node::data_model_node::DataModelNode
 use std::str::FromStr;
 use yaml_rust::{yaml, Yaml};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct StringNode {
     #[allow(dead_code)]
     title: Option<String>,
@@ -29,7 +29,7 @@ pub struct StringNode {
     x_faker: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum StringFormat {
     Date,
     DateTime,

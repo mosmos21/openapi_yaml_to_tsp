@@ -46,23 +46,22 @@ impl Operation {
 #[derive(Debug)]
 pub struct OperationNode {
     #[allow(dead_code)]
-    op: Operation,
+    pub op: Operation,
     #[allow(dead_code)]
-    summary: Option<String>,
+    pub summary: Option<String>,
     #[allow(dead_code)]
-    operation_id: Option<String>,
+    pub operation_id: Option<String>,
     #[allow(dead_code)]
-    description: Option<String>,
+    pub description: Option<String>,
     #[allow(dead_code)]
-    tags: Box<Vec<String>>,
+    pub tags: Box<Vec<String>>,
     #[allow(dead_code)]
-    securities: Box<Vec<yaml::Hash>>,
+    pub securities: Box<Vec<yaml::Hash>>,
+    pub parameters: Box<Vec<ParameterNode>>,
     #[allow(dead_code)]
-    parameters: Box<Vec<ParameterNode>>,
+    pub request_body: Option<RequestBodyNode>,
     #[allow(dead_code)]
-    request_body: Option<RequestBodyNode>,
-    #[allow(dead_code)]
-    responses: Box<Vec<ResponseNode>>,
+    pub responses: Box<Vec<ResponseNode>>,
 }
 
 const EXPECTED_KEYS: [&'static str; 8] = [

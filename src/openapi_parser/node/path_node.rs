@@ -5,10 +5,8 @@ use yaml_rust::{yaml, Yaml};
 
 #[derive(Debug)]
 pub struct PathNode {
-    #[allow(dead_code)]
-    path: String,
-    #[allow(dead_code)]
-    ref_file_path: PathBuf,
+    pub path: String,
+    pub ref_file_path: PathBuf,
 }
 
 fn build_path_node((key, value): (&Yaml, &Yaml)) -> Option<PathNode> {

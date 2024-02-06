@@ -96,6 +96,8 @@ fn parse_yaml_file(file: &YamlFile) -> OpenAPIFileNode {
     }
 }
 
+// NOTE: tspのexampleがわからんので一旦nodeから消す
+
 pub fn parse_yaml_files(files: &Vec<YamlFile>) -> Vec<OpenAPIFileNode> {
     files.into_iter().map(parse_yaml_file).collect()
 }

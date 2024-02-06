@@ -13,7 +13,7 @@ use crate::openapi_parser::parser::OpenAPINode;
 use std::path::PathBuf;
 use yaml_rust::{yaml, Yaml};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum DataModelNode {
     Array(ArrayNode),
     Object(ObjectNode),

@@ -114,6 +114,9 @@ pub fn load_yaml(root: &PathBuf) -> YamlNode {
     let paths = entries
         .into_iter()
         .map(|entry| entry.expect("failed to read_entry").path())
+        .filter(|path| {
+            path.is_dir() || path.to_str().map(|s| s.ends_with(".yaml")).unwrap_or(false)
+        })
         .collect::<Vec<_>>();
 
     let nodes = paths

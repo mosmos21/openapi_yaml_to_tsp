@@ -3,7 +3,7 @@ use crate::openapi_parser::node::data_model_node::DataModelNode;
 use std::str::FromStr;
 use yaml_rust::yaml;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NumberNode {
     #[allow(dead_code)]
     format: Option<NumberFormat>,
@@ -32,7 +32,7 @@ const EXPECTED_KEYS: [&'static str; 8] = [
     "example",
 ];
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum NumberFormat {
     Float,
     Double,

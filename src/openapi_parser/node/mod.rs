@@ -8,3 +8,5 @@ pub mod tag_node;
 pub mod unknown_node;
 
 pub mod operation_node;
+
+pub use operation_node::*;

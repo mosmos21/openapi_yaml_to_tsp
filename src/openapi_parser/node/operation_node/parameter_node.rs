@@ -5,23 +5,22 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use yaml_rust::{yaml, Yaml};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ParameterNode {
+    pub name: String,
     #[allow(dead_code)]
-    name: String,
+    pub position: ParameterPosition,
     #[allow(dead_code)]
-    position: ParameterPosition,
+    pub description: Option<String>,
     #[allow(dead_code)]
-    description: Option<String>,
+    pub required: Option<bool>,
     #[allow(dead_code)]
-    required: Option<bool>,
+    pub schema: DataModelNode,
     #[allow(dead_code)]
-    schema: DataModelNode,
-    #[allow(dead_code)]
-    parameter_enum: Option<Vec<String>>,
+    pub parameter_enum: Option<Vec<String>>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ParameterPosition {
     Query,
     Header,

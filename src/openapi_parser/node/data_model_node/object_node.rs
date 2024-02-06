@@ -3,7 +3,7 @@ use crate::openapi_parser::node::data_model_node::{build_data_model_node, DataMo
 use std::collections::HashSet;
 use yaml_rust::{yaml, Yaml};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ObjectNode {
     pub title: Option<String>,
     #[allow(dead_code)]
@@ -16,7 +16,7 @@ pub struct ObjectNode {
     pub example: Option<yaml::Hash>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PropertyNode {
     #[allow(dead_code)]
     key: String,

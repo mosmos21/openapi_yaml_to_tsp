@@ -3,7 +3,7 @@ use crate::openapi_parser::node::data_model_node::data_model_node::{
 };
 use yaml_rust::yaml;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct OneOfNode {
     #[allow(dead_code)]
     items: Vec<DataModelNode>,

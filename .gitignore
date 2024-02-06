@@ -1,2 +1,4 @@
 /target
 openapi_node.log
+type_spec_node.log
+compiler_env.log

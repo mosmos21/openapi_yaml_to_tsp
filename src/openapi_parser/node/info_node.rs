@@ -5,10 +5,8 @@ use yaml_rust::yaml;
 
 #[derive(Debug)]
 pub struct InfoNode {
-    #[allow(dead_code)]
-    title: String,
-    #[allow(dead_code)]
-    version: String,
+    pub title: String,
+    pub version: String,
     #[allow(dead_code)]
     contact: Contact,
     #[allow(dead_code)]
