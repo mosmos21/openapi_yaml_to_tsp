@@ -1,8 +1,17 @@
-use crate::type_spec::node::{data::model_node::ModelNode, namespace_node::NamespaceNode};
+use crate::type_spec::node::*;
+use std::fmt::Display;
 
 #[derive(Debug)]
 pub enum TypeSpecNode {
-    Namespace(NamespaceNode),
+    Interface(InterfaceNode),
     Model(ModelNode),
-    Unknown,
+}
+
+impl Display for TypeSpecNode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TypeSpecNode::Interface(node) => write!(f, "{}", node),
+            TypeSpecNode::Model(node) => write!(f, "{}", node),
+        }
+    }
 }

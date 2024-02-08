@@ -5,8 +5,7 @@ use crate::openapi_parser::node::operation_node::request_body_node::{
 use crate::openapi_parser::node::operation_node::response_node::{
     build_response_nodes, ResponseNode,
 };
-use crate::openapi_parser::node::operation_node::{build_parameters_node, ParameterNode};
-use crate::openapi_parser::parser::OpenAPINode;
+use crate::openapi_parser::node::*;
 use std::path::PathBuf;
 use yaml_rust::{yaml, Yaml};
 

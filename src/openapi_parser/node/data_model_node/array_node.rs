@@ -3,8 +3,7 @@ use yaml_rust::yaml;
 
 #[derive(Debug, Clone)]
 pub struct ArrayNode {
-    #[allow(dead_code)]
-    items: Box<DataModelNode>,
+    pub items: Box<DataModelNode>,
 }
 
 pub fn build_array_node(hash: &yaml::Hash) -> Option<DataModelNode> {

@@ -1,28 +1,23 @@
-use crate::compiler::OpenAPIFileNodeMap;
 use crate::openapi_parser::{OpenAPIFileNode, OpenAPINode, ParameterNode};
 use std::collections::HashSet;
 
-pub fn remove_examples(file_nodes: &mut OpenAPIFileNodeMap) {
-    let file_paths = file_nodes.keys().cloned().collect::<Vec<_>>();
-    for path in file_paths {
-        let node = file_nodes.get_mut(&path).unwrap();
-        if node.content.iter().all(|node| {
+pub fn remove_examples(file_nodes: &mut Vec<OpenAPIFileNode>) {
+    file_nodes.retain(|file_node| {
+        file_node.contents.iter().all(|node| {
             if let OpenAPINode::Example(_) = node {
-                true
-            } else {
                 false
+            } else {
+                true
             }
-        }) {
-            file_nodes.remove(&path);
-        }
-    }
+        })
+    });
 }
 
 // =================================================================================================
 
 fn list_parameter_nodes(file_node: &OpenAPIFileNode) -> Vec<ParameterNode> {
     file_node
-        .content
+        .contents
         .iter()
         .filter_map(|node| {
             if let OpenAPINode::Parameters(parameters) = node {
@@ -40,7 +35,7 @@ fn insert_parameters_to_operation_node(
     parameters: Vec<ParameterNode>,
 ) {
     file_node
-        .content
+        .contents
         .iter_mut()
         .filter_map(|node| {
             if let OpenAPINode::Operation(operation) = node {
@@ -65,7 +60,7 @@ fn insert_parameters_to_operation_node(
 }
 
 fn delete_parameters_node(file_node: &mut OpenAPIFileNode) {
-    file_node.content.retain(|node| {
+    file_node.contents.retain(|node| {
         if let OpenAPINode::Parameters(_) = node {
             false
         } else {
@@ -74,8 +69,8 @@ fn delete_parameters_node(file_node: &mut OpenAPIFileNode) {
     });
 }
 
-pub fn merge_parameter_nodes(file_nodes: &mut OpenAPIFileNodeMap) {
-    file_nodes.values_mut().for_each(|file_node| {
+pub fn merge_parameter_nodes(file_nodes: &mut Vec<OpenAPIFileNode>) {
+    file_nodes.iter_mut().for_each(|file_node| {
         let parameters = list_parameter_nodes(&file_node);
         insert_parameters_to_operation_node(file_node, parameters);
         delete_parameters_node(file_node);

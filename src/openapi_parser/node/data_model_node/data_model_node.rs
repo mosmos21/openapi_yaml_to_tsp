@@ -1,15 +1,4 @@
-use crate::openapi_parser::node::data_model_node::{
-    all_of_node::{build_all_of_node, AllOfNode},
-    array_node::{build_array_node, ArrayNode},
-    boolean_node::{build_boolean_node, BooleanNode},
-    integer_node::{build_integer_node, IntegerNode},
-    number_node::{build_number_node, NumberNode},
-    object_node::{build_object_node, ObjectNode},
-    one_of_node::{build_one_of_node, OneOfNode},
-    ref_node::{build_ref_node, RefNode},
-    string_node::{build_string_node, StringNode},
-};
-use crate::openapi_parser::parser::OpenAPINode;
+use crate::openapi_parser::node::*;
 use std::path::PathBuf;
 use yaml_rust::{yaml, Yaml};
 

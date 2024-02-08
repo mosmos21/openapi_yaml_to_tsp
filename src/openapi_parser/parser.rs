@@ -1,39 +1,11 @@
 use crate::openapi_parser::node::{
-    data_model_node::{parse_data_model_content, parse_data_models_content, DataModelNode},
-    example_node::{parse_example_content, ExampleNode},
-    info_node::{parse_info_content, InfoNode},
-    metadata_node::{parse_metadata_content, MetadataNode},
-    operation_node::{
-        parse_operation_content, parse_parameters_content, OperationNode, ParameterNode,
-    },
-    path_node::{parse_paths_content, PathNode},
-    server_node::{parse_servers_content, ServerNode},
-    tag_node::{parse_tags_content, TagNode},
-    unknown_node::parse_unknown_content,
+    parse_data_model_content, parse_data_models_content, parse_example_content, parse_info_content,
+    parse_metadata_content, parse_operation_content, parse_parameters_content, parse_paths_content,
+    parse_servers_content, parse_tags_content, parse_unknown_content, OpenAPIFileNode, OpenAPINode,
 };
 use crate::yaml_loader::YamlFile;
 use std::path::PathBuf;
 use yaml_rust::yaml;
-
-#[derive(Debug)]
-pub struct OpenAPIFileNode {
-    pub path: PathBuf,
-    pub content: Box<Vec<OpenAPINode>>,
-}
-
-#[derive(Debug)]
-pub enum OpenAPINode {
-    Metadata(MetadataNode),
-    Info(InfoNode),
-    Servers(Box<Vec<ServerNode>>),
-    Tags(Box<Vec<TagNode>>),
-    Paths(Box<Vec<PathNode>>),
-    Operation(OperationNode),
-    DataModel(DataModelNode),
-    Parameters(Box<Vec<ParameterNode>>),
-    Example(ExampleNode),
-    Unknown(Box<yaml::Hash>),
-}
 
 fn parse_content(hash: yaml::Hash, path: &PathBuf) -> (Option<Vec<OpenAPINode>>, yaml::Hash) {
     vec![
@@ -60,7 +32,7 @@ fn parse_content(hash: yaml::Hash, path: &PathBuf) -> (Option<Vec<OpenAPINode>>,
 }
 
 fn parse_yaml_content(mut hash: yaml::Hash, path: &PathBuf) -> Vec<OpenAPINode> {
-    let mut result = vec![];
+    let mut result = Vec::new();
 
     while hash.len() > 0 {
         let len = hash.len();
@@ -92,11 +64,9 @@ fn parse_yaml_file(file: &YamlFile) -> OpenAPIFileNode {
 
     OpenAPIFileNode {
         path,
-        content: Box::new(content),
+        contents: Box::new(content),
     }
 }
-
-// NOTE: tspのexampleがわからんので一旦nodeから消す
 
 pub fn parse_yaml_files(files: &Vec<YamlFile>) -> Vec<OpenAPIFileNode> {
     files.into_iter().map(parse_yaml_file).collect()

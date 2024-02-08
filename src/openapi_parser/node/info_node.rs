@@ -1,5 +1,5 @@
 use crate::openapi_parser::common::get_value;
-use crate::openapi_parser::parser::OpenAPINode;
+use crate::openapi_parser::node::OpenAPINode;
 use std::path::PathBuf;
 use yaml_rust::yaml;
 

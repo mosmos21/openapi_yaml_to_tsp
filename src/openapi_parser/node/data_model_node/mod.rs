@@ -9,4 +9,13 @@ mod one_of_node;
 mod ref_node;
 mod string_node;
 
+pub use all_of_node::*;
+pub use array_node::*;
+pub use boolean_node::*;
 pub use data_model_node::*;
+pub use integer_node::*;
+pub use number_node::*;
+pub use object_node::*;
+pub use one_of_node::*;
+pub use ref_node::*;
+pub use string_node::*;

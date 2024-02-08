@@ -1,6 +1,5 @@
 use crate::openapi_parser::common::{check_unexpected_keys, get_value};
-use crate::openapi_parser::node::data_model_node::{build_data_model_node, DataModelNode};
-use crate::openapi_parser::parser::OpenAPINode;
+use crate::openapi_parser::node::*;
 use std::path::PathBuf;
 use std::str::FromStr;
 use yaml_rust::{yaml, Yaml};

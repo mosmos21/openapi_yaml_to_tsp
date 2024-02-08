@@ -6,9 +6,7 @@ use yaml_rust::{yaml, Yaml};
 #[derive(Debug, Clone)]
 pub struct ObjectNode {
     pub title: Option<String>,
-    #[allow(dead_code)]
     pub properties: Box<Vec<PropertyNode>>,
-    #[allow(dead_code)]
     pub nullable: Option<bool>,
     #[allow(dead_code)]
     pub description: Option<String>,
@@ -18,12 +16,9 @@ pub struct ObjectNode {
 
 #[derive(Debug, Clone)]
 pub struct PropertyNode {
-    #[allow(dead_code)]
-    key: String,
-    #[allow(dead_code)]
-    value: DataModelNode,
-    #[allow(dead_code)]
-    required: bool,
+    pub key: String,
+    pub value: DataModelNode,
+    pub required: bool,
 }
 
 const EXPECTED_KEYS: [&'static str; 8] = [
