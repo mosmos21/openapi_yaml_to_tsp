@@ -32,7 +32,7 @@ impl Display for TypeSpecFileNode {
         let uses = self
             .uses
             .iter()
-            .map(|u| format!("using \"{};\"", u))
+            .map(|u| format!("using {};", u))
             .collect::<Vec<String>>()
             .join("\n");
         let contents = self

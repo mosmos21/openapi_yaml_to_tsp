@@ -11,6 +11,12 @@ impl From<String> for IdentifierNode {
     }
 }
 
+impl From<&String> for IdentifierNode {
+    fn from(name: &String) -> Self {
+        IdentifierNode { name: name.clone() }
+    }
+}
+
 impl<'a> From<&'a str> for IdentifierNode {
     fn from(name: &'a str) -> Self {
         IdentifierNode {

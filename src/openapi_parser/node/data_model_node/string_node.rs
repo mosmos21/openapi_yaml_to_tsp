@@ -1,5 +1,6 @@
 use crate::openapi_parser::common::{check_unexpected_keys, get_value};
 use crate::openapi_parser::node::data_model_node::data_model_node::DataModelNode;
+use std::fmt::Display;
 use std::str::FromStr;
 use yaml_rust::{yaml, Yaml};
 
@@ -7,8 +8,7 @@ use yaml_rust::{yaml, Yaml};
 pub struct StringNode {
     #[allow(dead_code)]
     title: Option<String>,
-    #[allow(dead_code)]
-    string_enum: Option<Vec<String>>,
+    pub string_enum: Option<Vec<String>>,
     #[allow(dead_code)]
     nullable: Option<bool>,
     #[allow(dead_code)]
@@ -17,14 +17,10 @@ pub struct StringNode {
     description: Option<String>,
     #[allow(dead_code)]
     default: Option<String>,
-    #[allow(dead_code)]
-    pattern: Option<String>,
-    #[allow(dead_code)]
-    format: Option<StringFormat>,
-    #[allow(dead_code)]
-    min_length: Option<usize>,
-    #[allow(dead_code)]
-    max_length: Option<usize>,
+    pub pattern: Option<String>,
+    pub format: Option<StringFormat>,
+    pub min_length: Option<usize>,
+    pub max_length: Option<usize>,
     #[allow(dead_code)]
     x_faker: Option<String>,
 }
@@ -36,6 +32,18 @@ pub enum StringFormat {
     Password,
     Byte,
     Binary,
+}
+
+impl Display for StringFormat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Date => write!(f, "date"),
+            Self::DateTime => write!(f, "date-time"),
+            Self::Password => write!(f, "password"),
+            Self::Byte => write!(f, "byte"),
+            Self::Binary => write!(f, "binary"),
+        }
+    }
 }
 
 impl FromStr for StringFormat {

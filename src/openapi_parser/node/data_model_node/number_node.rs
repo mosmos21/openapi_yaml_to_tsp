@@ -5,8 +5,7 @@ use yaml_rust::yaml;
 
 #[derive(Debug, Clone)]
 pub struct NumberNode {
-    #[allow(dead_code)]
-    format: Option<NumberFormat>,
+    pub format: Option<NumberFormat>,
     #[allow(dead_code)]
     description: Option<String>,
     #[allow(dead_code)]

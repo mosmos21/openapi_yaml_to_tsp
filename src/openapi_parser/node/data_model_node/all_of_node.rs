@@ -3,8 +3,7 @@ use yaml_rust::yaml;
 
 #[derive(Debug, Clone)]
 pub struct AllOfNode {
-    #[allow(dead_code)]
-    items: Vec<DataModelNode>,
+    pub items: Vec<DataModelNode>,
 }
 
 pub fn build_all_of_node(hash: &yaml::Hash) -> Option<DataModelNode> {

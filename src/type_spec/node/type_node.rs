@@ -12,6 +12,13 @@ pub enum TypeNode {
 
 impl Display for TypeNode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.to_string().to_lowercase())
+        match self {
+            TypeNode::Boolean => write!(f, "bool"),
+            TypeNode::Int32 => write!(f, "int32"),
+            TypeNode::Int64 => write!(f, "int64"),
+            TypeNode::Float32 => write!(f, "float32"),
+            TypeNode::Float64 => write!(f, "float64"),
+            TypeNode::String => write!(f, "string"),
+        }
     }
 }

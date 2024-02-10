@@ -10,7 +10,7 @@ pub struct ModelNode {
 
 impl Display for ModelNode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "model {} {{\n}}", self.name)
+        write!(f, "model {} {}", self.name, self.record)
     }
 }
 
@@ -21,11 +21,53 @@ pub enum ModelContentNode {
     Type(TypeNode),
     ModelRef(IdentifierNode),
     Union(Vec<ModelContentNode>),
+    StringLiteral(String),
+    Intersect(Vec<ModelContentNode>),
+}
+
+impl Display for ModelContentNode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ModelContentNode::Record(record) => write!(f, "{}", record),
+            ModelContentNode::Array(array) => write!(f, "{}", array),
+            ModelContentNode::Type(t) => write!(f, "{}", t),
+            ModelContentNode::ModelRef(id) => write!(f, "{}", id),
+            ModelContentNode::Union(nodes) => {
+                let nodes = nodes
+                    .iter()
+                    .map(|n| format!("{}", n))
+                    .collect::<Vec<String>>();
+
+                write!(f, "{}", nodes.join(" | "))
+            }
+            ModelContentNode::StringLiteral(s) => write!(f, "{}", s),
+            ModelContentNode::Intersect(intersect) => {
+                let nodes = intersect
+                    .iter()
+                    .map(|n| format!("{}", n))
+                    .collect::<Vec<String>>();
+
+                write!(f, "{}", nodes.join(" & "))
+            }
+        }
+    }
 }
 
 #[derive(Debug)]
 pub struct RecordModelNode {
     pub properties: Box<Vec<RecordPropertyNode>>,
+}
+
+impl Display for RecordModelNode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let properties = self
+            .properties
+            .iter()
+            .map(|p| format!("{}", p))
+            .collect::<Vec<String>>()
+            .join("\n");
+        write!(f, "{{\n{}\n}}", properties)
+    }
 }
 
 #[derive(Debug)]
@@ -36,7 +78,19 @@ pub struct RecordPropertyNode {
     pub required: bool,
 }
 
-pub trait RecordPropertyDecorator: Debug {}
+impl Display for RecordPropertyNode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let decorators = self
+            .decorators
+            .iter()
+            .map(|d| format!("{}", d))
+            .collect::<Vec<String>>()
+            .join("\n");
+        write!(f, "{}\n{}: {};", &decorators, &self.key, &self.value)
+    }
+}
+
+pub trait RecordPropertyDecorator: Display + Debug {}
 
 #[derive(Debug)]
 pub enum RecordPropertyKey {
@@ -44,7 +98,22 @@ pub enum RecordPropertyKey {
     String(String),
 }
 
+impl Display for RecordPropertyKey {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            RecordPropertyKey::Identifier(id) => write!(f, "{}", id),
+            RecordPropertyKey::String(s) => write!(f, "\"{}\"", s),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct ArrayModelNode {
-    items: Box<Vec<ModelContentNode>>,
+    pub item_type: Box<ModelContentNode>,
+}
+
+impl Display for ArrayModelNode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}[]", self.item_type)
+    }
 }

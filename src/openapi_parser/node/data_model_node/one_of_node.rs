@@ -5,8 +5,7 @@ use yaml_rust::yaml;
 
 #[derive(Debug, Clone)]
 pub struct OneOfNode {
-    #[allow(dead_code)]
-    items: Vec<DataModelNode>,
+    pub items: Vec<DataModelNode>,
 }
 
 pub fn build_one_of_node(hash: &yaml::Hash) -> Option<DataModelNode> {
