@@ -1,4 +1,5 @@
-use crate::type_spec::node::RecordPropertyDecorator;
+use crate::type_spec::node::common::string_literal;
+use crate::type_spec::node::{NameSpaceDecorator, RecordPropertyDecorator};
 use std::fmt::Display;
 
 #[derive(Debug)]
@@ -78,3 +79,22 @@ impl Display for FormatDecorator {
 }
 
 impl RecordPropertyDecorator for FormatDecorator {}
+
+#[derive(Debug)]
+pub struct ServiceDecorator {
+    pub title: String,
+    pub version: String,
+}
+
+impl Display for ServiceDecorator {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "@service({{ title: {}, version: {} }})",
+            string_literal(&self.title),
+            string_literal(&self.version)
+        )
+    }
+}
+
+impl NameSpaceDecorator for ServiceDecorator {}

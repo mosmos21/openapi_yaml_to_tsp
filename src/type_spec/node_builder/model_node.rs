@@ -29,7 +29,13 @@ fn build_intersection_node(all_of: &openapi_node::AllOfNode) -> type_spec_node::
 }
 
 fn build_model_ref_node(ref_node: &openapi_node::RefNode) -> type_spec_node::ModelContentNode {
-    type_spec_node::ModelContentNode::ModelRef(IdentifierNode::from("ModelRefName"))
+    if let openapi_node::RefNode::ComponentRef(component_ref) = ref_node {
+        type_spec_node::ModelContentNode::ModelRef(IdentifierNode::from(
+            &component_ref.component_name,
+        ))
+    } else {
+        panic!("Unexpected ref node: {:?}", ref_node)
+    }
 }
 
 fn build_array_property_node(

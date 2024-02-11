@@ -1,9 +1,7 @@
 use crate::type_spec::node::TypeSpecFileNode;
 use crate::{
-    compiler::parse_postprocess,
-    openapi_parser::{parse_yaml_files, DataModelNode, OpenAPIFileNode, OpenAPINode},
-    type_spec::node_builder::build_type_spec_file_node,
-    yaml_loader::load_yaml,
+    compiler::parse_postprocess, openapi_parser::node::*, openapi_parser::parse_yaml_files,
+    type_spec::node_builder::build_type_spec_file_node, yaml_loader::load_yaml,
 };
 use std::collections::HashMap;
 use std::fmt::Debug;
@@ -11,7 +9,7 @@ use std::fs::{self, File};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-type ComponentFilePathMap = HashMap<String, String>;
+pub type FilePathObjectMap = HashMap<String, DataModelNode>;
 
 type PathFileMap = HashMap<String, String>;
 
@@ -73,20 +71,18 @@ fn build_path_file_map(file_nodes: &Vec<OpenAPIFileNode>) -> PathFileMap {
         .collect()
 }
 
-fn build_component_file_path_map(nodes: &Vec<OpenAPIFileNode>) -> ComponentFilePathMap {
-    let mut component_file_path_map = HashMap::new();
+fn build_file_path_object_map(nodes: &Vec<OpenAPIFileNode>) -> FilePathObjectMap {
+    let mut map = HashMap::new();
     for node in nodes.iter() {
         let path = node.path.to_str().unwrap().to_string();
-        for n in node.contents.iter() {
-            if let OpenAPINode::DataModel(DataModelNode::Object(object)) = n {
-                if let Some(title) = &object.title {
-                    component_file_path_map.insert(title.clone(), path.clone());
-                }
+        if node.contents.len() == 1 {
+            if let Some(OpenAPINode::DataModel(data_model_node)) = node.contents.get(0) {
+                map.insert(path, data_model_node.clone());
             }
         }
     }
 
-    component_file_path_map
+    map
 }
 
 fn write_type_spec_file(file_node: &TypeSpecFileNode) {
@@ -103,7 +99,7 @@ fn write_type_spec_file(file_node: &TypeSpecFileNode) {
 pub struct CompilerEnv {
     pub namespace: String,
     pub path_file_map: PathFileMap,
-    pub component_file_path_map: ComponentFilePathMap,
+    pub file_path_object_map: FilePathObjectMap,
 }
 
 pub fn compile(root_dir: &PathBuf) {
@@ -113,14 +109,18 @@ pub fn compile(root_dir: &PathBuf) {
     parse_postprocess::remove_examples(&mut openapi_file_nodes);
     parse_postprocess::merge_parameter_nodes(&mut openapi_file_nodes);
 
-    write_log("openapi_node.log", &openapi_file_nodes);
-
     let env = CompilerEnv {
         namespace: build_namespace(root_dir),
-        component_file_path_map: build_component_file_path_map(&openapi_file_nodes),
         path_file_map: build_path_file_map(&openapi_file_nodes),
+        file_path_object_map: build_file_path_object_map(&openapi_file_nodes),
     };
     write_log("compiler_env.log", &env);
+
+    parse_postprocess::replace_file_ref_to_component_ref(
+        &mut openapi_file_nodes,
+        &env.file_path_object_map,
+    );
+    write_log("openapi_node.log", &openapi_file_nodes);
 
     let type_spec_file_nodes = openapi_file_nodes
         .into_iter()

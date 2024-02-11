@@ -6,8 +6,7 @@ use yaml_rust::{yaml, Yaml};
 pub struct RequestBodyNode {
     #[allow(dead_code)]
     content_type: ContentType,
-    #[allow(dead_code)]
-    schema: DataModelNode,
+    pub schema: DataModelNode,
     #[allow(dead_code)]
     examples: Box<Vec<Yaml>>,
 }

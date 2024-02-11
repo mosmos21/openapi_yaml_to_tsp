@@ -13,8 +13,7 @@ pub struct ResponseNode {
     description: Option<String>,
     #[allow(dead_code)]
     content_type: Option<ContentType>,
-    #[allow(dead_code)]
-    schema: Option<DataModelNode>,
+    pub schema: Option<DataModelNode>,
     #[allow(dead_code)]
     examples: Option<Box<HashMap<String, Yaml>>>,
 }

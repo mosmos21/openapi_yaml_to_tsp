@@ -86,7 +86,11 @@ impl Display for RecordPropertyNode {
             .map(|d| format!("{}", d))
             .collect::<Vec<String>>()
             .join("\n");
-        write!(f, "{}\n{}: {};", &decorators, &self.key, &self.value)
+        if self.decorators.is_empty() {
+            write!(f, "{}: {};", &self.key, &self.value)
+        } else {
+            write!(f, "{}\n{}: {};", &decorators, &self.key, &self.value)
+        }
     }
 }
 

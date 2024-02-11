@@ -57,9 +57,7 @@ pub struct OperationNode {
     #[allow(dead_code)]
     pub securities: Box<Vec<yaml::Hash>>,
     pub parameters: Box<Vec<ParameterNode>>,
-    #[allow(dead_code)]
     pub request_body: Option<RequestBodyNode>,
-    #[allow(dead_code)]
     pub responses: Box<Vec<ResponseNode>>,
 }
 

@@ -15,6 +15,22 @@ pub enum DataModelNode {
     Ref(RefNode),
 }
 
+impl DataModelNode {
+    pub fn title(&self) -> Option<String> {
+        match self {
+            DataModelNode::Array(node) => node.items.title(),
+            DataModelNode::Object(node) => node.title.clone(),
+            DataModelNode::OneOf(node) => None,
+            DataModelNode::String(node) => node.title.clone(),
+            DataModelNode::Integer(node) => None,
+            DataModelNode::Number(node) => None,
+            DataModelNode::Boolean(node) => None,
+            DataModelNode::AllOf(node) => None,
+            DataModelNode::Ref(node) => None,
+        }
+    }
+}
+
 pub fn build_data_model_node(hash: &yaml::Hash, title: Option<String>) -> Option<DataModelNode> {
     if let Some(node) = build_object_node(hash, title) {
         return Some(node);

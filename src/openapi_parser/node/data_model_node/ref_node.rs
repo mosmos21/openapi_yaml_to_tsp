@@ -9,14 +9,12 @@ pub enum RefNode {
 
 #[derive(Debug, Clone)]
 pub struct ComponentRefNode {
-    #[allow(dead_code)]
-    component_name: String,
+    pub component_name: String,
 }
 
 #[derive(Debug, Clone)]
 pub struct FileRefNode {
-    #[allow(dead_code)]
-    file_path: String,
+    pub file_path: String,
 }
 
 pub fn build_ref_node(hash: &yaml::Hash) -> Option<DataModelNode> {
@@ -24,13 +22,17 @@ pub fn build_ref_node(hash: &yaml::Hash) -> Option<DataModelNode> {
         .get(&Yaml::String("$ref".to_string()))
         .and_then(|v| v.as_str())
     {
-        let node = if ref_path.starts_with("#/components/schemas/") {
+        let node = if ref_path.ends_with(".yaml") {
+            RefNode::FileRef(FileRefNode {
+                file_path: ref_path.to_string(),
+            })
+        } else if ref_path.starts_with("#/components/schemas/") {
             let component_name = ref_path.replace("#/components/schemas/", "").to_string();
 
             RefNode::ComponentRef(ComponentRefNode { component_name })
         } else {
-            RefNode::FileRef(FileRefNode {
-                file_path: ref_path.to_string(),
+            RefNode::ComponentRef(ComponentRefNode {
+                component_name: ref_path.to_string(),
             })
         };
 

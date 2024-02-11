@@ -13,7 +13,6 @@ pub struct ParameterNode {
     pub description: Option<String>,
     #[allow(dead_code)]
     pub required: Option<bool>,
-    #[allow(dead_code)]
     pub schema: DataModelNode,
     #[allow(dead_code)]
     pub parameter_enum: Option<Vec<String>>,

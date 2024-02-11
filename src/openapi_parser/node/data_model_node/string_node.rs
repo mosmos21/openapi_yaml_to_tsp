@@ -6,8 +6,7 @@ use yaml_rust::{yaml, Yaml};
 
 #[derive(Debug, Clone)]
 pub struct StringNode {
-    #[allow(dead_code)]
-    title: Option<String>,
+    pub title: Option<String>,
     pub string_enum: Option<Vec<String>>,
     #[allow(dead_code)]
     nullable: Option<bool>,

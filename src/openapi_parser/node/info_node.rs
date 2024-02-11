@@ -7,20 +7,15 @@ use yaml_rust::yaml;
 pub struct InfoNode {
     pub title: String,
     pub version: String,
-    #[allow(dead_code)]
-    contact: Contact,
-    #[allow(dead_code)]
-    terms_of_service: String,
+    pub contact: Contact,
+    pub terms_of_service: String,
 }
 
 #[derive(Debug)]
 pub struct Contact {
-    #[allow(dead_code)]
-    name: String,
-    #[allow(dead_code)]
-    url: String,
-    #[allow(dead_code)]
-    email: String,
+    pub name: String,
+    pub url: String,
+    pub email: String,
 }
 
 fn build_contact(hash: &yaml::Hash) -> Option<Contact> {
