@@ -1,3 +1,4 @@
+use crate::type_spec::node::decorators::TypeSpecDecorator;
 use crate::type_spec::node::type_node::TypeNode;
 use crate::type_spec::node::*;
 use std::fmt::Display;
@@ -40,7 +41,7 @@ impl Display for ModelContentNode {
 
                 write!(f, "{}", nodes.join(" | "))
             }
-            ModelContentNode::StringLiteral(s) => write!(f, "{}", s),
+            ModelContentNode::StringLiteral(s) => write!(f, "{}", string_literal(s)),
             ModelContentNode::Intersect(intersect) => {
                 let nodes = intersect
                     .iter()
@@ -94,9 +95,9 @@ impl Display for RecordPropertyNode {
     }
 }
 
-pub trait RecordPropertyDecorator: Display + Debug {}
+pub trait RecordPropertyDecorator: TypeSpecDecorator {}
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum RecordPropertyKey {
     Identifier(IdentifierNode),
     String(String),

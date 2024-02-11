@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 yaml-rust = "0.4.5"
 log = "0.4.20"
+pathdiff = "0.2.1"

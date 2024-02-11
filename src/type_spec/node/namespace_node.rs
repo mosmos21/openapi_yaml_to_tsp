@@ -1,3 +1,4 @@
+use crate::type_spec::node::decorators::TypeSpecDecorator;
 use std::fmt::{Debug, Display};
 
 #[derive(Debug)]
@@ -23,4 +24,4 @@ impl Display for NamespaceNode {
     }
 }
 
-pub trait NameSpaceDecorator: Display + Debug {}
+pub trait NameSpaceDecorator: TypeSpecDecorator {}

@@ -1,6 +1,9 @@
-use crate::openapi_parser::node as openapi_node;
+use crate::compiler::CompilerEnv;
+use crate::openapi_parser::{node as openapi_node, ComponentRefNode};
 use crate::type_spec::node as type_spec_node;
 use crate::type_spec::node::IdentifierNode;
+use pathdiff::diff_paths;
+use std::path::{Path, PathBuf};
 
 fn build_array_node(array: &openapi_node::ArrayNode) -> type_spec_node::ModelContentNode {
     type_spec_node::ModelContentNode::Array(type_spec_node::ArrayModelNode {
@@ -289,4 +292,97 @@ pub fn build_model_node(object_node: &openapi_node::ObjectNode) -> type_spec_nod
     } else {
         panic!("Invalid model node");
     }
+}
+
+fn get_import_path(
+    identifier_node: &IdentifierNode,
+    current_file_path: &PathBuf,
+    env: &CompilerEnv,
+) -> String {
+    let target_path_str = env.object_file_path_map.get(&identifier_node.name);
+    if let Some(target_path_str) = target_path_str {
+        let target_path = Path::new(target_path_str);
+
+        let current_dir = Path::new(current_file_path.parent().expect("Cannot find parent dir"));
+
+        let path = diff_paths(target_path, current_dir)
+            .expect("Cannot find relative path")
+            .to_str()
+            .expect("Cannot convert to str")
+            .replace(".yaml", ".tsp");
+
+        format!("./{}", path)
+    } else {
+        "UnknownComponentRef".to_string()
+    }
+}
+
+fn build_import_lib_nodes_from_model_content_node(
+    model_content_node: &type_spec_node::ModelContentNode,
+    current_file_path: &PathBuf,
+    env: &CompilerEnv,
+) -> Vec<type_spec_node::ImportLibNode> {
+    let mut result = vec![];
+
+    match model_content_node {
+        type_spec_node::ModelContentNode::Record(record) => result.extend(
+            build_import_lib_nodes_from_record_model_node(record, current_file_path, env),
+        ),
+        type_spec_node::ModelContentNode::Array(array) => {
+            result.extend(build_import_lib_nodes_from_model_content_node(
+                &array.item_type,
+                current_file_path,
+                env,
+            ))
+        }
+        type_spec_node::ModelContentNode::Union(union) => union.iter().for_each(|node| {
+            result.extend(build_import_lib_nodes_from_model_content_node(
+                node,
+                current_file_path,
+                env,
+            ))
+        }),
+        type_spec_node::ModelContentNode::Intersect(intersect) => {
+            intersect.iter().for_each(|node| {
+                result.extend(build_import_lib_nodes_from_model_content_node(
+                    node,
+                    current_file_path,
+                    env,
+                ))
+            })
+        }
+        type_spec_node::ModelContentNode::ModelRef(id) => {
+            let import_path = get_import_path(id, current_file_path, env);
+            result.push(type_spec_node::ImportLibNode::from(import_path));
+        }
+        _ => {}
+    }
+
+    result
+}
+
+fn build_import_lib_nodes_from_record_model_node(
+    record_node: &type_spec_node::RecordModelNode,
+    current_file_path: &PathBuf,
+    env: &CompilerEnv,
+) -> Vec<type_spec_node::ImportLibNode> {
+    let mut result = vec![];
+
+    record_node.properties.iter().for_each(|property| {
+        result.extend(build_import_lib_nodes_from_model_content_node(
+            &property.value,
+            current_file_path,
+            env,
+        ))
+    });
+
+    result
+}
+
+pub fn build_import_lib_nodes_from_model_node(
+    model_node: &type_spec_node::ModelNode,
+    current_file_path: &PathBuf,
+    env: &CompilerEnv,
+) -> Vec<type_spec_node::ImportLibNode> {
+    build_import_lib_nodes_from_record_model_node(&model_node.record, current_file_path, env)
 }

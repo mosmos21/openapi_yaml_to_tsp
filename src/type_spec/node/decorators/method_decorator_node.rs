@@ -1,3 +1,4 @@
+use crate::type_spec::node::decorators::{LibInfo, TypeSpecDecorator};
 use crate::type_spec::node::OperationDecorator;
 use std::fmt::Display;
 
@@ -26,5 +27,22 @@ impl MethodDecoratorNode {
         MethodDecoratorNode { method }
     }
 }
+
+impl Display for MethodDecoratorNode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.method)
+    }
+}
+
+impl LibInfo for MethodDecoratorNode {
+    fn get_lib_name(&self) -> Option<&'static str> {
+        Some("@typespec/http")
+    }
+    fn get_namespace(&self) -> Option<&'static str> {
+        Some("TypeSpec.Http")
+    }
+}
+
+impl TypeSpecDecorator for MethodDecoratorNode {}
 
 impl OperationDecorator for MethodDecoratorNode {}

@@ -1,3 +1,4 @@
+use crate::type_spec::node::decorators::{LibInfo, TypeSpecDecorator};
 use crate::type_spec::node::*;
 use std::collections::HashMap;
 use std::fmt::Display;
@@ -82,5 +83,16 @@ impl Display for LicenseNode {
         write!(f, "{}", hash_map_to_string(&map))
     }
 }
+
+impl LibInfo for AdditionalInfoNode {
+    fn get_lib_name(&self) -> Option<&'static str> {
+        Some("@typespec/openapi")
+    }
+    fn get_namespace(&self) -> Option<&'static str> {
+        Some("TypeSpec.OpenAPI")
+    }
+}
+
+impl TypeSpecDecorator for AdditionalInfoNode {}
 
 impl NameSpaceDecorator for AdditionalInfoNode {}

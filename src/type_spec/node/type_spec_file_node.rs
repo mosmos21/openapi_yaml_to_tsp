@@ -5,17 +5,22 @@ use std::path::PathBuf;
 #[derive(Debug)]
 pub struct TypeSpecFileNode {
     pub path: PathBuf,
-    pub imports: Box<Vec<String>>,
-    pub uses: Box<Vec<String>>,
+    pub imports: Box<Vec<ImportLibNode>>,
+    pub namespaces: Box<Vec<UsingNamespaceNode>>,
     pub contents: Box<Vec<TypeSpecNode>>,
 }
 
 impl TypeSpecFileNode {
-    pub fn new(path: PathBuf, contents: Vec<TypeSpecNode>) -> Self {
+    pub fn new(
+        path: PathBuf,
+        imports: Vec<ImportLibNode>,
+        namespaces: Vec<UsingNamespaceNode>,
+        contents: Vec<TypeSpecNode>,
+    ) -> Self {
         TypeSpecFileNode {
             path,
-            imports: Box::new(vec!["@typespec/http".to_string()]),
-            uses: Box::new(vec!["TypeSpec.Http".to_string()]),
+            imports: Box::new(imports),
+            namespaces: Box::new(namespaces),
             contents: Box::new(contents),
         }
     }
@@ -26,13 +31,13 @@ impl Display for TypeSpecFileNode {
         let imports = self
             .imports
             .iter()
-            .map(|i| format!("import \"{}\";", i))
+            .map(|i| format!("{}", i))
             .collect::<Vec<String>>()
             .join("\n");
-        let uses = self
-            .uses
+        let namespaces = self
+            .namespaces
             .iter()
-            .map(|u| format!("using {};", u))
+            .map(|u| format!("{}", u))
             .collect::<Vec<String>>()
             .join("\n");
         let contents = self
@@ -42,6 +47,6 @@ impl Display for TypeSpecFileNode {
             .collect::<Vec<String>>()
             .join("\n\n");
 
-        write!(f, "{}\n\n{}\n\n{}\n", imports, uses, contents)
+        write!(f, "{}\n\n{}\n\n{}\n", imports, namespaces, contents)
     }
 }

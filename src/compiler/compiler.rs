@@ -11,6 +11,8 @@ use std::path::{Path, PathBuf};
 
 pub type FilePathObjectMap = HashMap<String, DataModelNode>;
 
+pub type ObjectFilePathMap = HashMap<String, String>;
+
 type PathFileMap = HashMap<String, String>;
 
 fn write_log<T: Debug>(log_file_name: &str, content: &T) {
@@ -85,6 +87,23 @@ fn build_file_path_object_map(nodes: &Vec<OpenAPIFileNode>) -> FilePathObjectMap
     map
 }
 
+fn build_object_file_path_map(nodes: &Vec<OpenAPIFileNode>) -> ObjectFilePathMap {
+    let mut map = HashMap::new();
+    for node in nodes.iter() {
+        let path = node.path.to_str().unwrap().to_string();
+
+        for content in node.contents.iter() {
+            if let OpenAPINode::DataModel(data_model_node) = content {
+                if let Some(title) = &data_model_node.title() {
+                    map.insert(title.clone(), path.clone());
+                }
+            }
+        }
+    }
+
+    map
+}
+
 fn write_type_spec_file(file_node: &TypeSpecFileNode) {
     let file_name = file_node.path.to_str().unwrap();
     if Path::new(file_name).exists() {
@@ -100,6 +119,18 @@ pub struct CompilerEnv {
     pub namespace: String,
     pub path_file_map: PathFileMap,
     pub file_path_object_map: FilePathObjectMap,
+    pub object_file_path_map: ObjectFilePathMap,
+}
+
+impl CompilerEnv {
+    fn build(root_dir: &PathBuf, openapi_file_nodes: &Vec<OpenAPIFileNode>) -> Self {
+        Self {
+            namespace: build_namespace(root_dir),
+            path_file_map: build_path_file_map(openapi_file_nodes),
+            file_path_object_map: build_file_path_object_map(openapi_file_nodes),
+            object_file_path_map: build_object_file_path_map(openapi_file_nodes),
+        }
+    }
 }
 
 pub fn compile(root_dir: &PathBuf) {
@@ -109,11 +140,7 @@ pub fn compile(root_dir: &PathBuf) {
     parse_postprocess::remove_examples(&mut openapi_file_nodes);
     parse_postprocess::merge_parameter_nodes(&mut openapi_file_nodes);
 
-    let env = CompilerEnv {
-        namespace: build_namespace(root_dir),
-        path_file_map: build_path_file_map(&openapi_file_nodes),
-        file_path_object_map: build_file_path_object_map(&openapi_file_nodes),
-    };
+    let env = CompilerEnv::build(root_dir, &openapi_file_nodes);
     write_log("compiler_env.log", &env);
 
     parse_postprocess::replace_file_ref_to_component_ref(

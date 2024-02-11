@@ -1,6 +1,7 @@
+use crate::type_spec::node::decorators::TypeSpecDecorator;
 use std::fmt::Debug;
 
-pub trait OperationDecorator: Debug {}
+pub trait OperationDecorator: TypeSpecDecorator {}
 
 #[derive(Debug)]
 pub struct OperationNode {
@@ -16,4 +17,4 @@ pub struct ParameterNode {
     pub type_name: String,
 }
 
-pub trait ParameterDecorator: Debug {}
+pub trait ParameterDecorator: TypeSpecDecorator {}

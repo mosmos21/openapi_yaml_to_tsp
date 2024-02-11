@@ -1,7 +1,8 @@
+use crate::type_spec::node::decorators::TypeSpecDecorator;
 use crate::type_spec::node::OperationNode;
 use std::fmt::{Debug, Display};
 
-pub trait InterfaceDecorator: Debug {}
+pub trait InterfaceDecorator: TypeSpecDecorator {}
 
 #[derive(Debug)]
 pub struct InterfaceNode {

@@ -1,4 +1,5 @@
 use crate::type_spec::node::common::string_literal;
+use crate::type_spec::node::decorators::{LibInfo, TypeSpecDecorator};
 use crate::type_spec::node::{NameSpaceDecorator, RecordPropertyDecorator};
 use std::fmt::Display;
 
@@ -13,6 +14,17 @@ impl Display for MinLengthDecorator {
     }
 }
 
+impl LibInfo for MinLengthDecorator {
+    fn get_lib_name(&self) -> Option<&'static str> {
+        None
+    }
+    fn get_namespace(&self) -> Option<&'static str> {
+        None
+    }
+}
+
+impl TypeSpecDecorator for MinLengthDecorator {}
+
 impl RecordPropertyDecorator for MinLengthDecorator {}
 
 #[derive(Debug)]
@@ -26,6 +38,17 @@ impl Display for MaxLengthDecorator {
     }
 }
 
+impl LibInfo for MaxLengthDecorator {
+    fn get_lib_name(&self) -> Option<&'static str> {
+        None
+    }
+    fn get_namespace(&self) -> Option<&'static str> {
+        None
+    }
+}
+
+impl TypeSpecDecorator for MaxLengthDecorator {}
+
 impl RecordPropertyDecorator for MaxLengthDecorator {}
 
 #[derive(Debug)]
@@ -35,9 +58,20 @@ pub struct PatternDecorator {
 
 impl Display for PatternDecorator {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "@pattern({})", self.value)
+        write!(f, "@pattern({})", string_literal(&self.value))
     }
 }
+
+impl LibInfo for PatternDecorator {
+    fn get_lib_name(&self) -> Option<&'static str> {
+        None
+    }
+    fn get_namespace(&self) -> Option<&'static str> {
+        None
+    }
+}
+
+impl TypeSpecDecorator for PatternDecorator {}
 
 impl RecordPropertyDecorator for PatternDecorator {}
 
@@ -52,6 +86,17 @@ impl Display for MinimumDecorator {
     }
 }
 
+impl LibInfo for MinimumDecorator {
+    fn get_lib_name(&self) -> Option<&'static str> {
+        None
+    }
+    fn get_namespace(&self) -> Option<&'static str> {
+        None
+    }
+}
+
+impl TypeSpecDecorator for MinimumDecorator {}
+
 impl RecordPropertyDecorator for MinimumDecorator {}
 
 #[derive(Debug)]
@@ -65,6 +110,17 @@ impl Display for MaximumDecorator {
     }
 }
 
+impl LibInfo for MaximumDecorator {
+    fn get_lib_name(&self) -> Option<&'static str> {
+        None
+    }
+    fn get_namespace(&self) -> Option<&'static str> {
+        None
+    }
+}
+
+impl TypeSpecDecorator for MaximumDecorator {}
+
 impl RecordPropertyDecorator for MaximumDecorator {}
 
 #[derive(Debug)]
@@ -77,6 +133,17 @@ impl Display for FormatDecorator {
         write!(f, "@format({})", self.value)
     }
 }
+
+impl LibInfo for FormatDecorator {
+    fn get_lib_name(&self) -> Option<&'static str> {
+        None
+    }
+    fn get_namespace(&self) -> Option<&'static str> {
+        None
+    }
+}
+
+impl TypeSpecDecorator for FormatDecorator {}
 
 impl RecordPropertyDecorator for FormatDecorator {}
 
@@ -96,5 +163,16 @@ impl Display for ServiceDecorator {
         )
     }
 }
+
+impl LibInfo for ServiceDecorator {
+    fn get_lib_name(&self) -> Option<&'static str> {
+        None
+    }
+    fn get_namespace(&self) -> Option<&'static str> {
+        None
+    }
+}
+
+impl TypeSpecDecorator for ServiceDecorator {}
 
 impl NameSpaceDecorator for ServiceDecorator {}

@@ -28,3 +28,33 @@ pub fn build_namespace_node(
         name: env.namespace.clone(),
     }
 }
+
+pub fn build_import_lib_nodes_from_namespace_node(
+    namespace_node: &type_spec_node::NamespaceNode,
+) -> Vec<type_spec_node::ImportLibNode> {
+    let mut imports = vec![];
+
+    for decorator in namespace_node.decorators.iter() {
+        if let Some(import) = decorator.get_lib_name() {
+            imports.push(type_spec_node::ImportLibNode::new(import.to_string()));
+        }
+    }
+
+    imports
+}
+
+pub fn build_using_namespace_nodes_from_namespace_node(
+    namespace_node: &type_spec_node::NamespaceNode,
+) -> Vec<type_spec_node::UsingNamespaceNode> {
+    let mut namespaces = vec![];
+
+    for decorator in namespace_node.decorators.iter() {
+        if let Some(namespace) = decorator.get_namespace() {
+            namespaces.push(type_spec_node::UsingNamespaceNode::new(
+                namespace.to_string(),
+            ));
+        }
+    }
+
+    namespaces
+}
