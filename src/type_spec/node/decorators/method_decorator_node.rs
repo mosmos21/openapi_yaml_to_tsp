@@ -13,7 +13,14 @@ pub enum Method {
 
 impl Display for Method {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.to_string().to_lowercase())
+        let method = match self {
+            Self::Get => "get",
+            Self::Post => "post",
+            Self::Put => "put",
+            Self::Delete => "delete",
+            Self::Patch => "patch",
+        };
+        write!(f, "{}", method)
     }
 }
 
@@ -30,7 +37,7 @@ impl MethodDecoratorNode {
 
 impl Display for MethodDecoratorNode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.method)
+        write!(f, "@{}", self.method)
     }
 }
 

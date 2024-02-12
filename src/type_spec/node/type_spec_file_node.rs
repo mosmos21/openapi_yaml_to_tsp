@@ -28,25 +28,35 @@ impl TypeSpecFileNode {
 
 impl Display for TypeSpecFileNode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let imports = self
-            .imports
-            .iter()
-            .map(|i| format!("{}", i))
-            .collect::<Vec<String>>()
-            .join("\n");
-        let namespaces = self
-            .namespaces
-            .iter()
-            .map(|u| format!("{}", u))
-            .collect::<Vec<String>>()
-            .join("\n");
-        let contents = self
-            .contents
-            .iter()
-            .map(|c| format!("{}", c))
-            .collect::<Vec<String>>()
-            .join("\n\n");
+        let mut result = vec![];
+        if self.imports.len() > 0 {
+            let imports = self
+                .imports
+                .iter()
+                .map(|i| format!("{}", i))
+                .collect::<Vec<String>>()
+                .join("\n");
+            result.push(imports);
+        }
+        if self.namespaces.len() > 0 {
+            let namespaces = self
+                .namespaces
+                .iter()
+                .map(|u| format!("{}", u))
+                .collect::<Vec<String>>()
+                .join("\n");
+            result.push(namespaces);
+        }
+        if self.contents.len() > 0 {
+            let contents = self
+                .contents
+                .iter()
+                .map(|c| format!("{}", c))
+                .collect::<Vec<String>>()
+                .join("\n\n");
+            result.push(contents);
+        }
 
-        write!(f, "{}\n\n{}\n\n{}\n", imports, namespaces, contents)
+        write!(f, "{}", result.join("\n\n"))
     }
 }
