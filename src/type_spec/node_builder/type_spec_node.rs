@@ -2,6 +2,7 @@ use crate::compiler::CompilerEnv;
 use crate::openapi_parser::node as openapi_node;
 use crate::type_spec::node as type_spec_node;
 use crate::type_spec::node_builder::build_namespace_node;
+use crate::type_spec::node_builder::enum_node::build_enum_node;
 use crate::type_spec::node_builder::model_node::{
     build_import_lib_nodes_from_model_node, build_model_node,
 };
@@ -17,6 +18,7 @@ type BuildContentResult = (
 
 fn build_content_namespace_node(
     mut contents: Vec<openapi_node::OpenAPINode>,
+    _current_file_name: &str,
     env: &CompilerEnv,
 ) -> BuildContentResult {
     if let Some(openapi_node::OpenAPINode::Info(info_node)) = contents.get(0) {
@@ -33,6 +35,7 @@ fn build_content_namespace_node(
 
 fn build_content_model_node(
     mut contents: Vec<openapi_node::OpenAPINode>,
+    _current_file_name: &str,
     _env: &CompilerEnv,
 ) -> BuildContentResult {
     if let Some(openapi_node::OpenAPINode::DataModel(openapi_node::DataModelNode::Object(ojb))) =
@@ -49,8 +52,30 @@ fn build_content_model_node(
     }
 }
 
+fn build_content_enum_node(
+    mut contents: Vec<openapi_node::OpenAPINode>,
+    current_file_name: &str,
+    _env: &CompilerEnv,
+) -> BuildContentResult {
+    if let Some(openapi_node::OpenAPINode::DataModel(openapi_node::DataModelNode::String(
+        string_node,
+    ))) = contents.get(0)
+    {
+        let enum_node = build_enum_node(string_node, current_file_name);
+        dbg!(&enum_node);
+        contents.remove(0);
+        (
+            Some(type_spec_node::TypeSpecNode::Enum(enum_node)),
+            contents,
+        )
+    } else {
+        (None, contents)
+    }
+}
+
 fn build_content_unknown_node(
     mut contents: Vec<openapi_node::OpenAPINode>,
+    _current_file_name: &str,
     _env: &CompilerEnv,
 ) -> BuildContentResult {
     contents.remove(0);
@@ -59,10 +84,12 @@ fn build_content_unknown_node(
 
 fn build_content(
     mut contents: Vec<openapi_node::OpenAPINode>,
+    current_file_name: &str,
     env: &CompilerEnv,
 ) -> BuildContentResult {
     vec![
         build_content_namespace_node,
+        build_content_enum_node,
         build_content_model_node,
         build_content_unknown_node,
     ]
@@ -71,20 +98,21 @@ fn build_content(
         if node.is_some() {
             (node, contents)
         } else {
-            builder(contents, env)
+            builder(contents, current_file_name, env)
         }
     })
 }
 
 pub fn build_contents(
     mut contents: Vec<openapi_node::OpenAPINode>,
+    current_file_name: &str,
     env: &CompilerEnv,
 ) -> Vec<type_spec_node::TypeSpecNode> {
     let mut result = Vec::new();
 
     while contents.len() > 0 {
         let len = contents.len();
-        let (node, new_contents) = build_content(contents, env);
+        let (node, new_contents) = build_content(contents, current_file_name, env);
         if let Some(node) = node {
             result.push(node);
         }

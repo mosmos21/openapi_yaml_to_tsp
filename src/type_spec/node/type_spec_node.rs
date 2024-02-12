@@ -1,3 +1,4 @@
+use crate::type_spec::node::enum_node::EnumNode;
 use crate::type_spec::node::*;
 use std::fmt::Display;
 
@@ -6,6 +7,7 @@ pub enum TypeSpecNode {
     NameSpace(NamespaceNode),
     Interface(InterfaceNode),
     Model(ModelNode),
+    Enum(EnumNode),
 }
 
 impl Display for TypeSpecNode {
@@ -14,6 +16,7 @@ impl Display for TypeSpecNode {
             TypeSpecNode::NameSpace(node) => write!(f, "{}", node),
             TypeSpecNode::Interface(node) => write!(f, "{}", node),
             TypeSpecNode::Model(node) => write!(f, "{}", node),
+            TypeSpecNode::Enum(node) => write!(f, "{}", node),
         }
     }
 }

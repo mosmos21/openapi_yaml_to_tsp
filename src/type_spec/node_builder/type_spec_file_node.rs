@@ -6,7 +6,7 @@ use crate::type_spec::node_builder::type_spec_node::{
     build_import_lib_nodes_from_type_spec_node, build_using_namespace_nodes_from_type_spec_node,
 };
 use std::collections::HashSet;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 fn build_import_and_name_spaces(
     contents: &Vec<type_spec_node::TypeSpecNode>,
@@ -44,7 +44,12 @@ pub fn build_type_spec_file_node(
         .to_str()
         .map(|s| s.replace(".yaml", ".tsp"))
         .expect("invalid path");
-    let contents = build_contents(contents.into_iter().collect(), env);
+    let file_name = Path::new(path_str)
+        .file_name()
+        .expect("invalid file name")
+        .to_str()
+        .expect("invalid file name");
+    let contents = build_contents(contents.into_iter().collect(), file_name, env);
     let (imports, namespaces) = build_import_and_name_spaces(&contents, &path, env);
 
     type_spec_node::TypeSpecFileNode::new(path_str.into(), imports, namespaces, contents)
