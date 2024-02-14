@@ -23,6 +23,7 @@ pub enum ModelContentNode {
     ModelRef(IdentifierNode),
     Union(Vec<ModelContentNode>),
     StringLiteral(String),
+    IntegerLiteral(i64),
     Intersect(Vec<ModelContentNode>),
 }
 
@@ -42,6 +43,7 @@ impl Display for ModelContentNode {
                 write!(f, "{}", nodes.join(" | "))
             }
             ModelContentNode::StringLiteral(s) => write!(f, "{}", string_literal(s)),
+            ModelContentNode::IntegerLiteral(i) => write!(f, "{}", i),
             ModelContentNode::Intersect(intersect) => {
                 let nodes = intersect
                     .iter()
@@ -87,10 +89,16 @@ impl Display for RecordPropertyNode {
             .map(|d| format!("{}", d))
             .collect::<Vec<String>>()
             .join("\n");
+        let separator = if self.required { ":" } else { "?:" };
+
         if self.decorators.is_empty() {
-            write!(f, "{}: {};", &self.key, &self.value)
+            write!(f, "{}{} {};", &self.key, separator, &self.value)
         } else {
-            write!(f, "{}\n{}: {};", &decorators, &self.key, &self.value)
+            write!(
+                f,
+                "{}\n{}{} {};",
+                &decorators, &self.key, separator, &self.value
+            )
         }
     }
 }

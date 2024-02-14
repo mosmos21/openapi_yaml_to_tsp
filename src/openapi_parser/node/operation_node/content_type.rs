@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 #[derive(Debug, Clone)]
 pub enum ContentType {
     ApplicationJson,
@@ -16,14 +18,16 @@ impl ContentType {
             _ => panic!("[RequestBodyType::from_str] invalid request body type {s}"),
         }
     }
-    pub fn to_string(&self) -> String {
-        match self {
-            ContentType::ApplicationJson => "application/json".to_string(),
-            ContentType::ApplicationXWwwFormUrlencoded => {
-                "application/x-www-form-urlencoded".to_string()
-            }
-            ContentType::MultipartFormData => "multipart/form-data".to_string(),
-            ContentType::TextPlain => "text/plain".to_string(),
-        }
+}
+
+impl Display for ContentType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let content_type = match self {
+            ContentType::ApplicationJson => "application/json",
+            ContentType::ApplicationXWwwFormUrlencoded => "application/x-www-form-urlencoded",
+            ContentType::MultipartFormData => "multipart/form-data",
+            ContentType::TextPlain => "text/plain",
+        };
+        write!(f, "{}", content_type)
     }
 }

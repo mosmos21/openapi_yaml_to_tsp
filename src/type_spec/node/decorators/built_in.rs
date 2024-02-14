@@ -58,7 +58,11 @@ pub struct PatternDecorator {
 
 impl Display for PatternDecorator {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "@pattern({})", string_literal(&self.value))
+        write!(
+            f,
+            "@pattern({})",
+            string_literal(&self.value.replace("\\", "\\\\"))
+        )
     }
 }
 

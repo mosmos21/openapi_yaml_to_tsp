@@ -1,6 +1,9 @@
-use crate::openapi_parser::node as openapi_node;
+use crate::openapi_parser::{node as openapi_node, ParameterPosition};
 use crate::type_spec::node as type_spec_node;
 use crate::type_spec::node::OperationDecorator;
+use crate::type_spec::node_builder::model_node::{build_model_content_node, build_model_node};
+use log::warn;
+use std::process;
 
 impl From<&openapi_node::Operation> for type_spec_node::decorators::MethodDecoratorNode {
     fn from(operation: &openapi_node::Operation) -> Self {
@@ -26,6 +29,76 @@ impl From<&openapi_node::Operation> for type_spec_node::decorators::MethodDecora
     }
 }
 
+impl From<&openapi_node::ParameterNode> for type_spec_node::ParameterNode {
+    fn from(parameter: &openapi_node::ParameterNode) -> Self {
+        let mut decorators: Vec<Box<dyn type_spec_node::ParameterDecorator>> = vec![];
+        match parameter.position {
+            ParameterPosition::Path => {
+                decorators.push(Box::new(type_spec_node::decorators::PathDecorator {}));
+            }
+            ParameterPosition::Header => {
+                decorators.push(Box::new(type_spec_node::decorators::HeaderDecorator {}));
+            }
+            ParameterPosition::Cookie => {
+                warn!("cookie parameter is not supported")
+            }
+            _ => {}
+        }
+
+        let name = parameter.name.clone();
+        let type_model = build_model_content_node(&parameter.schema);
+
+        type_spec_node::ParameterNode {
+            decorators: Box::new(decorators),
+            name,
+            type_model,
+        }
+    }
+}
+
+fn build_response_node(response: &openapi_node::ResponseNode) -> type_spec_node::ModelContentNode {
+    let mut properties = vec![];
+
+    properties.push(type_spec_node::RecordPropertyNode {
+        decorators: Box::new(vec![Box::new(
+            type_spec_node::decorators::StatusCodeDecorator {},
+        )]),
+        key: type_spec_node::RecordPropertyKey::Identifier(type_spec_node::IdentifierNode::from(
+            "statusCode",
+        )),
+        value: type_spec_node::ModelContentNode::IntegerLiteral(response.status.get_code().into()),
+        required: true,
+    });
+
+    if let Some(content_type) = &response.content_type {
+        properties.push(type_spec_node::RecordPropertyNode {
+            decorators: Box::new(vec![Box::new(
+                type_spec_node::decorators::HeaderDecorator {},
+            )]),
+            key: type_spec_node::RecordPropertyKey::Identifier(
+                type_spec_node::IdentifierNode::from("contentType"),
+            ),
+            value: type_spec_node::ModelContentNode::StringLiteral(content_type.to_string()),
+            required: true,
+        });
+    }
+
+    if let Some(body) = &response.schema {
+        properties.push(type_spec_node::RecordPropertyNode {
+            decorators: Box::new(vec![Box::new(type_spec_node::decorators::BodyDecorator {})]),
+            key: type_spec_node::RecordPropertyKey::Identifier(
+                type_spec_node::IdentifierNode::from("body"),
+            ),
+            value: build_model_content_node(body),
+            required: true,
+        });
+    }
+
+    type_spec_node::ModelContentNode::Record(type_spec_node::RecordModelNode {
+        properties: Box::new(properties),
+    })
+}
+
 fn get_operation_name<'a>(operation: &openapi_node::Operation) -> &'a str {
     match operation {
         openapi_node::Operation::Get => "list",
@@ -42,12 +115,23 @@ pub fn build_operation_node(
     let decorators: Vec<Box<dyn OperationDecorator>> = vec![Box::new(
         type_spec_node::decorators::MethodDecoratorNode::from(&operation_node.op),
     )];
-    let parameters = vec![];
+    let parameters = operation_node
+        .parameters
+        .iter()
+        .map(|p| type_spec_node::ParameterNode::from(p))
+        .collect::<Vec<_>>();
+
+    let responses = operation_node
+        .responses
+        .iter()
+        .map(|res| build_response_node(res))
+        .collect::<Vec<_>>();
 
     type_spec_node::OperationNode {
         name: get_operation_name(&operation_node.op).to_string(),
         decorators: Box::new(decorators),
         parameters: Box::new(parameters),
+        responses: Box::new(responses),
     }
 }
 

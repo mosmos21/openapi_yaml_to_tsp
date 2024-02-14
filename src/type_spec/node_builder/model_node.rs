@@ -263,7 +263,7 @@ fn build_number_type_node(t: &openapi_node::NumberNode) -> type_spec_node::Model
     }
 }
 
-fn build_model_content_node(
+pub fn build_model_content_node(
     data_mode_node: &openapi_node::DataModelNode,
 ) -> type_spec_node::ModelContentNode {
     match data_mode_node {

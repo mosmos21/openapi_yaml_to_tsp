@@ -7,12 +7,10 @@ use yaml_rust::{yaml, Yaml};
 
 #[derive(Debug)]
 pub struct ResponseNode {
-    #[allow(dead_code)]
-    status: ResponseStatus,
+    pub status: ResponseStatus,
     #[allow(dead_code)]
     description: Option<String>,
-    #[allow(dead_code)]
-    content_type: Option<ContentType>,
+    pub content_type: Option<ContentType>,
     pub schema: Option<DataModelNode>,
     #[allow(dead_code)]
     examples: Option<Box<HashMap<String, Yaml>>>,
@@ -31,6 +29,24 @@ pub enum ResponseStatus {
     NotFound,
     UnprocessableEntity,
     InternalServerError,
+}
+
+impl ResponseStatus {
+    pub fn get_code(&self) -> u16 {
+        match self {
+            ResponseStatus::OK => 200,
+            ResponseStatus::Created => 201,
+            ResponseStatus::Accepted => 202,
+            ResponseStatus::NoContent => 204,
+            ResponseStatus::MovedPermanently => 301,
+            ResponseStatus::BadRequest => 400,
+            ResponseStatus::Unauthorized => 401,
+            ResponseStatus::Forbidden => 403,
+            ResponseStatus::NotFound => 404,
+            ResponseStatus::UnprocessableEntity => 422,
+            ResponseStatus::InternalServerError => 500,
+        }
+    }
 }
 
 impl FromStr for ResponseStatus {
