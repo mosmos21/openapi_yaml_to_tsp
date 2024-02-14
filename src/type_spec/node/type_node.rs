@@ -7,6 +7,9 @@ pub enum TypeNode {
     Int64,
     Float32,
     Float64,
+    PlainDate,
+    UtcDateTime,
+    Byte,
     String,
 }
 
@@ -18,6 +21,9 @@ impl Display for TypeNode {
             TypeNode::Int64 => write!(f, "int64"),
             TypeNode::Float32 => write!(f, "float32"),
             TypeNode::Float64 => write!(f, "float64"),
+            TypeNode::PlainDate => write!(f, "plainDate"),
+            TypeNode::UtcDateTime => write!(f, "utcDateTime"),
+            TypeNode::Byte => write!(f, "byte"),
             TypeNode::String => write!(f, "string"),
         }
     }

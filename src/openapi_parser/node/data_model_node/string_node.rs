@@ -28,7 +28,6 @@ pub struct StringNode {
 pub enum StringFormat {
     Date,
     DateTime,
-    Password,
     Byte,
     Binary,
 }
@@ -38,7 +37,6 @@ impl Display for StringFormat {
         match self {
             Self::Date => write!(f, "date"),
             Self::DateTime => write!(f, "date-time"),
-            Self::Password => write!(f, "password"),
             Self::Byte => write!(f, "byte"),
             Self::Binary => write!(f, "binary"),
         }
@@ -52,7 +50,6 @@ impl FromStr for StringFormat {
         match s {
             "date" => Ok(Self::Date),
             "date-time" => Ok(Self::DateTime),
-            "password" => Ok(Self::Password),
             "byte" => Ok(Self::Byte),
             "binary" => Ok(Self::Binary),
             _ => Err(format!("unexpected string format: {}", s)),

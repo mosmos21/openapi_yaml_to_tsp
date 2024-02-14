@@ -34,6 +34,8 @@ pub fn build_interface_node(
 
 pub fn build_import_lib_nodes_from_interface_node(
     interface_node: &type_spec_node::InterfaceNode,
+    current_file_path: &PathBuf,
+    env: &CompilerEnv,
 ) -> Vec<type_spec_node::ImportLibNode> {
     let mut imports = vec![];
 
@@ -47,7 +49,11 @@ pub fn build_import_lib_nodes_from_interface_node(
     );
 
     interface_node.operations.iter().for_each(|operation| {
-        imports.extend(build_import_lib_nodes_from_operation_node(operation))
+        imports.extend(build_import_lib_nodes_from_operation_node(
+            operation,
+            current_file_path,
+            env,
+        ))
     });
 
     imports

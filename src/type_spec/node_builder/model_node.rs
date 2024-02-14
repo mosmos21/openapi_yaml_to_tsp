@@ -1,5 +1,5 @@
 use crate::compiler::CompilerEnv;
-use crate::openapi_parser::{node as openapi_node, ComponentRefNode};
+use crate::openapi_parser::{build_data_model_node, node as openapi_node, ComponentRefNode};
 use crate::type_spec::node as type_spec_node;
 use crate::type_spec::node::IdentifierNode;
 use pathdiff::diff_paths;
@@ -99,6 +99,25 @@ fn build_string_literal_enum_property_node(
     }
 }
 
+fn build_formatted_string_property_node(
+    key: &String,
+    value: &openapi_node::StringFormat,
+    required: bool,
+) -> type_spec_node::RecordPropertyNode {
+    let type_value = match value {
+        openapi_node::StringFormat::Date => type_spec_node::TypeNode::PlainDate,
+        openapi_node::StringFormat::DateTime => type_spec_node::TypeNode::UtcDateTime,
+        openapi_node::StringFormat::Byte => type_spec_node::TypeNode::Byte,
+        openapi_node::StringFormat::Binary => type_spec_node::TypeNode::Byte,
+    };
+    type_spec_node::RecordPropertyNode {
+        decorators: Box::new(vec![]),
+        key: type_spec_node::RecordPropertyKey::Identifier(IdentifierNode::from(key)),
+        value: build_type_node(type_value),
+        required,
+    }
+}
+
 fn build_string_property_node(
     key: &String,
     value: &openapi_node::StringNode,
@@ -106,6 +125,9 @@ fn build_string_property_node(
 ) -> type_spec_node::RecordPropertyNode {
     if let Some(values) = &value.string_enum {
         return build_string_literal_enum_property_node(key, values, required);
+    }
+    if let Some(str_format) = &value.format {
+        return build_formatted_string_property_node(key, str_format, required);
     }
 
     let mut decorators: Vec<Box<dyn type_spec_node::RecordPropertyDecorator>> = vec![];
@@ -167,7 +189,7 @@ fn build_number_property_node(
 
 fn build_boolean_property_node(
     key: &String,
-    value: &openapi_node::BooleanNode,
+    _value: &openapi_node::BooleanNode,
     required: bool,
 ) -> type_spec_node::RecordPropertyNode {
     type_spec_node::RecordPropertyNode {
@@ -300,6 +322,7 @@ fn get_import_path(
     env: &CompilerEnv,
 ) -> String {
     let target_path_str = env.object_file_path_map.get(&identifier_node.name);
+
     if let Some(target_path_str) = target_path_str {
         let target_path = Path::new(target_path_str);
 
@@ -317,7 +340,7 @@ fn get_import_path(
     }
 }
 
-fn build_import_lib_nodes_from_model_content_node(
+pub fn build_import_lib_nodes_from_model_content_node(
     model_content_node: &type_spec_node::ModelContentNode,
     current_file_path: &PathBuf,
     env: &CompilerEnv,

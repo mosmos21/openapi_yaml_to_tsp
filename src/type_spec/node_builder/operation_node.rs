@@ -1,9 +1,13 @@
+use crate::compiler::CompilerEnv;
 use crate::openapi_parser::{node as openapi_node, ParameterPosition};
 use crate::type_spec::node as type_spec_node;
 use crate::type_spec::node::OperationDecorator;
-use crate::type_spec::node_builder::model_node::{build_model_content_node, build_model_node};
+use crate::type_spec::node_builder::model_node::{
+    build_import_lib_nodes_from_model_content_node,
+    build_model_content_node
+};
 use log::warn;
-use std::process;
+use std::path::PathBuf;
 
 impl From<&openapi_node::Operation> for type_spec_node::decorators::MethodDecoratorNode {
     fn from(operation: &openapi_node::Operation) -> Self {
@@ -45,8 +49,21 @@ impl From<&openapi_node::ParameterNode> for type_spec_node::ParameterNode {
             _ => {}
         }
 
-        let name = parameter.name.clone();
-        let type_model = build_model_content_node(&parameter.schema);
+        let (name, type_model) = if parameter.name.ends_with("[]") {
+            (
+                parameter.name.replace("[]", ""),
+                build_model_content_node(&openapi_node::DataModelNode::Array(
+                    openapi_node::ArrayNode {
+                        items: Box::new(parameter.schema.clone()),
+                    },
+                )),
+            )
+        } else {
+            (
+                parameter.name.clone(),
+                build_model_content_node(&parameter.schema),
+            )
+        };
 
         type_spec_node::ParameterNode {
             decorators: Box::new(decorators),
@@ -135,8 +152,35 @@ pub fn build_operation_node(
     }
 }
 
+fn build_import_lib_nodes_from_parameter_node(
+    parameter_node: &type_spec_node::ParameterNode,
+    current_file_path: &PathBuf,
+    env: &CompilerEnv,
+) -> Vec<type_spec_node::ImportLibNode> {
+    let mut imports = vec![];
+
+    imports.extend(
+        parameter_node
+            .decorators
+            .iter()
+            .filter_map(|node| node.get_lib_name())
+            .map(type_spec_node::ImportLibNode::from)
+            .collect::<Vec<_>>(),
+    );
+
+    imports.extend(build_import_lib_nodes_from_model_content_node(
+        &parameter_node.type_model,
+        current_file_path,
+        env,
+    ));
+
+    imports
+}
+
 pub fn build_import_lib_nodes_from_operation_node(
     operation_node: &type_spec_node::OperationNode,
+    current_file_path: &PathBuf,
+    env: &CompilerEnv,
 ) -> Vec<type_spec_node::ImportLibNode> {
     let mut imports = vec![];
 
@@ -148,6 +192,22 @@ pub fn build_import_lib_nodes_from_operation_node(
             .map(type_spec_node::ImportLibNode::from)
             .collect::<Vec<_>>(),
     );
+
+    operation_node.parameters.iter().for_each(|parameter| {
+        imports.extend(build_import_lib_nodes_from_parameter_node(
+            parameter,
+            current_file_path,
+            env,
+        ))
+    });
+
+    operation_node.responses.iter().for_each(|response| {
+        imports.extend(build_import_lib_nodes_from_model_content_node(
+            response,
+            current_file_path,
+            env,
+        ))
+    });
 
     imports
 }

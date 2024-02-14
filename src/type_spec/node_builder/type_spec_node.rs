@@ -180,9 +180,9 @@ pub fn build_import_lib_nodes_from_type_spec_node(
                 env,
             ));
         }
-        type_spec_node::TypeSpecNode::Interface(interface_node) => {
-            imports.extend(build_import_lib_nodes_from_interface_node(interface_node))
-        }
+        type_spec_node::TypeSpecNode::Interface(interface_node) => imports.extend(
+            build_import_lib_nodes_from_interface_node(interface_node, current_file_path, env),
+        ),
         _ => {}
     }
 
