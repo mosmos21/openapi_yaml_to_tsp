@@ -49,8 +49,26 @@ pub fn build_type_spec_file_node(
         .expect("invalid file name")
         .to_str()
         .expect("invalid file name");
-    let contents = build_contents(contents.into_iter().collect(), file_name, env);
-    let (imports, namespaces) = build_import_and_name_spaces(&contents, &path, env);
+    let mut contents = build_contents(contents.into_iter().collect(), file_name, env);
+    let (mut imports, namespaces) = build_import_and_name_spaces(&contents, &path, env);
+
+    let imports_node = contents.iter().find(|node| {
+        if let type_spec_node::TypeSpecNode::Imports(_) = node {
+            true
+        } else {
+            false
+        }
+    });
+    if let Some(type_spec_node::TypeSpecNode::Imports(node)) = imports_node {
+        imports.extend(node.items.clone().into_iter());
+        contents.retain(|node| {
+            if let type_spec_node::TypeSpecNode::Imports(_) = node {
+                false
+            } else {
+                true
+            }
+        });
+    }
 
     type_spec_node::TypeSpecFileNode::new(path_str.into(), imports, namespaces, contents)
 }

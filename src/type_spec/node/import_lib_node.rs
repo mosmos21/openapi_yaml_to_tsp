@@ -6,6 +6,25 @@ pub struct ImportLibNode {
     pub lib_name: String,
 }
 
+#[derive(Debug)]
+pub struct ImportLibNodes {
+    pub items: Box<Vec<ImportLibNode>>,
+}
+
+impl Display for ImportLibNodes {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            self.items
+                .iter()
+                .map(|node| format!("{}", node))
+                .collect::<Vec<_>>()
+                .join("\n")
+        )
+    }
+}
+
 impl ImportLibNode {
     pub fn new(lib_name: String) -> Self {
         ImportLibNode { lib_name }

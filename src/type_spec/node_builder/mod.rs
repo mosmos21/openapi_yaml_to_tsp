@@ -1,5 +1,6 @@
 mod decorators;
 mod enum_node;
+mod import_lib_node;
 mod interface_node;
 mod model_node;
 mod namespace_node;

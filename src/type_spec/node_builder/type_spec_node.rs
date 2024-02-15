@@ -3,6 +3,7 @@ use crate::openapi_parser::{node as openapi_node, OperationNode};
 use crate::type_spec::node as type_spec_node;
 use crate::type_spec::node_builder::build_namespace_node;
 use crate::type_spec::node_builder::enum_node::build_enum_node;
+use crate::type_spec::node_builder::import_lib_node::build_import_lib_nodes;
 use crate::type_spec::node_builder::interface_node::{
     build_import_lib_nodes_from_interface_node, build_interface_node,
     build_using_namespace_nodes_from_interface_node,
@@ -19,6 +20,23 @@ type BuildContentResult = (
     Option<type_spec_node::TypeSpecNode>,
     Vec<openapi_node::OpenAPINode>,
 );
+
+fn build_content_import_nodes(
+    mut contents: Vec<openapi_node::OpenAPINode>,
+    _current_file_name: &str,
+    _env: &CompilerEnv,
+) -> BuildContentResult {
+    if let Some(openapi_node::OpenAPINode::Paths(paths)) = contents.get(0) {
+        let import_lib_node = build_import_lib_nodes(paths);
+        contents.remove(0);
+        (
+            Some(type_spec_node::TypeSpecNode::Imports(import_lib_node)),
+            contents,
+        )
+    } else {
+        (None, contents)
+    }
+}
 
 fn build_content_namespace_node(
     mut contents: Vec<openapi_node::OpenAPINode>,
@@ -124,6 +142,7 @@ fn build_content(
     env: &CompilerEnv,
 ) -> BuildContentResult {
     vec![
+        build_content_import_nodes,
         build_content_namespace_node,
         build_content_enum_node,
         build_content_model_node,
