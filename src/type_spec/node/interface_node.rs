@@ -13,12 +13,27 @@ pub struct InterfaceNode {
 
 impl Display for InterfaceNode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let operations = self
-            .operations
-            .iter()
-            .map(|op| format!("{}", op))
-            .collect::<Vec<_>>()
-            .join("\n");
-        write!(f, "interface {} {{\n{}\n}}\n", self.name, operations)
+        let mut result = vec![];
+        if self.decorators.len() > 0 {
+            result.push(
+                self.decorators
+                    .iter()
+                    .map(|d| d.to_string())
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+            );
+        }
+        result.push(format!("interface {} {{", self.name));
+        if self.operations.len() > 0 {
+            result.push(
+                self.operations
+                    .iter()
+                    .map(|op| format!("{}", op))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+            );
+        }
+        result.push("}".to_string());
+        write!(f, "{}", result.join("\n"))
     }
 }

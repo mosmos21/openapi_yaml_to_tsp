@@ -4,8 +4,22 @@ use crate::type_spec::node as type_spec_node;
 use crate::type_spec::node_builder::operation_node::{
     build_import_lib_nodes_from_operation_node, build_operation_node,
 };
+use regex::Regex;
 use std::path::PathBuf;
-use std::thread::current;
+
+fn to_pascal_case(s: &str) -> String {
+    let s = s.replace("{", "").replace("}", "");
+    let re = Regex::new(r"(^((\w))|(_\w))").unwrap();
+    re.replace_all(s.as_str(), |caps: &regex::Captures| {
+        let s = &caps[1];
+        if s.starts_with("_") {
+            s[1..].to_uppercase()
+        } else {
+            s.to_uppercase()
+        }
+    })
+    .to_string()
+}
 
 pub fn build_interface_node(
     operations: &Vec<&openapi_node::OperationNode>,
@@ -16,6 +30,11 @@ pub fn build_interface_node(
         .path_file_map
         .get(&current_file_name.replace(".tsp", ".yaml"))
         .expect("Failed to get route");
+    let interface_name = route.as_str()[1..]
+        .split("/")
+        .map(|s| to_pascal_case(s))
+        .collect::<Vec<_>>()
+        .join("");
     let decorators: Vec<Box<dyn type_spec_node::InterfaceDecorator>> =
         vec![Box::new(type_spec_node::decorators::RouteDecoratorNode {
             path: route.to_owned(),
@@ -26,7 +45,7 @@ pub fn build_interface_node(
         .collect::<Vec<_>>();
 
     type_spec_node::InterfaceNode {
-        name: "Interface".to_string(),
+        name: interface_name,
         decorators: Box::new(decorators),
         operations: Box::new(operations),
     }
