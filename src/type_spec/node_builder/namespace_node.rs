@@ -2,6 +2,8 @@ use crate::compiler::CompilerEnv;
 use crate::openapi_parser::node as openapi_node;
 use crate::type_spec::node as type_spec_node;
 
+use super::build_import_lib_nodes_from_type_spec_node;
+
 pub fn build_namespace_node(
     info_node: &openapi_node::InfoNode,
     env: &CompilerEnv,
@@ -26,6 +28,7 @@ pub fn build_namespace_node(
     type_spec_node::NamespaceNode {
         decorators: Box::new(decorators),
         name: env.namespace.clone(),
+        contents: Box::new(vec![]),
     }
 }
 

@@ -21,11 +21,11 @@ fn to_pascal_case(s: &str) -> String {
     .to_string()
 }
 
-pub fn build_interface_node(
+pub fn build_wrapped_interface_node(
     operations: &Vec<&openapi_node::OperationNode>,
     current_file_name: &str,
     env: &CompilerEnv,
-) -> type_spec_node::InterfaceNode {
+) -> type_spec_node::NamespaceNode {
     let route = env
         .path_file_map
         .get(&current_file_name.replace(".tsp", ".yaml"))
@@ -44,10 +44,16 @@ pub fn build_interface_node(
         .map(|op| build_operation_node(op))
         .collect::<Vec<_>>();
 
-    type_spec_node::InterfaceNode {
+    let interface = type_spec_node::InterfaceNode {
         name: interface_name,
         decorators: Box::new(decorators),
         operations: Box::new(operations),
+    };
+
+    type_spec_node::NamespaceNode {
+        decorators: Box::new(vec![]),
+        name: env.namespace.clone(),
+        contents: Box::new(vec![type_spec_node::TypeSpecNode::Interface(interface)]),
     }
 }
 

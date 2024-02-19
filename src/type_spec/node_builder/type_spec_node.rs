@@ -5,7 +5,7 @@ use crate::type_spec::node_builder::build_namespace_node;
 use crate::type_spec::node_builder::enum_node::build_enum_node;
 use crate::type_spec::node_builder::import_lib_node::build_import_lib_nodes;
 use crate::type_spec::node_builder::interface_node::{
-    build_import_lib_nodes_from_interface_node, build_interface_node,
+    build_import_lib_nodes_from_interface_node, build_wrapped_interface_node,
     build_using_namespace_nodes_from_interface_node,
 };
 use crate::type_spec::node_builder::model_alias_node::{
@@ -131,7 +131,7 @@ fn build_content_interface_node(
         })
         .collect::<Vec<_>>();
     if operations.len() > 0 {
-        let interface_node = build_interface_node(&operations, current_file_name, env);
+        let namespace_node = build_wrapped_interface_node(&operations, current_file_name, env);
         contents.retain(|content| {
             if let openapi_node::OpenAPINode::Operation(_) = content {
                 false
@@ -140,7 +140,7 @@ fn build_content_interface_node(
             }
         });
         (
-            Some(type_spec_node::TypeSpecNode::Interface(interface_node)),
+            Some(type_spec_node::TypeSpecNode::NameSpace(namespace_node)),
             contents,
         )
     } else {
@@ -213,6 +213,9 @@ pub fn build_import_lib_nodes_from_type_spec_node(
     match content {
         type_spec_node::TypeSpecNode::NameSpace(namespace_node) => {
             imports.extend(build_import_lib_nodes_from_namespace_node(namespace_node));
+            for content in namespace_node.contents.iter() {
+                imports.extend(build_import_lib_nodes_from_type_spec_node(content, current_file_path, env));
+            }
         }
         type_spec_node::TypeSpecNode::Model(model_node) => {
             imports.extend(build_import_lib_nodes_from_model_node(
@@ -244,6 +247,9 @@ pub fn build_using_namespace_nodes_from_type_spec_node(
             namespaces.extend(build_using_namespace_nodes_from_namespace_node(
                 namespace_node,
             ));
+            for content in namespace_node.contents.iter() {
+                namespaces.extend(build_using_namespace_nodes_from_type_spec_node(content, env));
+            }
         }
         type_spec_node::TypeSpecNode::Interface(interface_node) => namespaces.extend(
             build_using_namespace_nodes_from_interface_node(interface_node),
