@@ -107,8 +107,8 @@ fn build_formatted_string_property_node(
     let type_value = match value {
         openapi_node::StringFormat::Date => type_spec_node::TypeNode::PlainDate,
         openapi_node::StringFormat::DateTime => type_spec_node::TypeNode::UtcDateTime,
-        openapi_node::StringFormat::Byte => type_spec_node::TypeNode::Byte,
-        openapi_node::StringFormat::Binary => type_spec_node::TypeNode::Byte,
+        openapi_node::StringFormat::Byte => type_spec_node::TypeNode::Bytes,
+        openapi_node::StringFormat::Binary => type_spec_node::TypeNode::Bytes,
     };
     type_spec_node::RecordPropertyNode {
         decorators: Box::new(vec![]),
@@ -320,10 +320,14 @@ fn get_import_path(
     identifier_node: &IdentifierNode,
     current_file_path: &PathBuf,
     env: &CompilerEnv,
-) -> String {
+) -> Option<String> {
     let target_path_str = env.object_file_path_map.get(&identifier_node.name);
 
     if let Some(target_path_str) = target_path_str {
+        if current_file_path.eq(&PathBuf::from(target_path_str)) {
+            return None;
+        }
+
         let target_path = Path::new(target_path_str);
 
         let current_dir = Path::new(current_file_path.parent().expect("Cannot find parent dir"));
@@ -334,9 +338,9 @@ fn get_import_path(
             .expect("Cannot convert to str")
             .replace(".yaml", ".tsp");
 
-        format!("./{}", path)
+        Some(format!("./{}", path))
     } else {
-        "UnknownComponentRef".to_string()
+        None
     }
 }
 
@@ -375,8 +379,9 @@ pub fn build_import_lib_nodes_from_model_content_node(
             })
         }
         type_spec_node::ModelContentNode::ModelRef(id) => {
-            let import_path = get_import_path(id, current_file_path, env);
-            result.push(type_spec_node::ImportLibNode::from(import_path));
+            if let Some(import_path) = get_import_path(id, current_file_path, env) {
+                result.push(type_spec_node::ImportLibNode::from(import_path));
+            }
         }
         _ => {}
     }

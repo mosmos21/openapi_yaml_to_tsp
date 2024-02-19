@@ -9,6 +9,7 @@ pub enum TypeSpecNode {
     Interface(InterfaceNode),
     Model(ModelNode),
     Enum(EnumNode),
+    ModelAlias(ModelAliasNode),
 }
 
 impl Display for TypeSpecNode {
@@ -19,6 +20,7 @@ impl Display for TypeSpecNode {
             TypeSpecNode::Interface(node) => write!(f, "{}", node),
             TypeSpecNode::Model(node) => write!(f, "{}", node),
             TypeSpecNode::Enum(node) => write!(f, "{}", node),
+            TypeSpecNode::ModelAlias(node) => write!(f, "{}", node),
         }
     }
 }

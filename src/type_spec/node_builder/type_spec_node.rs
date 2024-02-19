@@ -8,6 +8,9 @@ use crate::type_spec::node_builder::interface_node::{
     build_import_lib_nodes_from_interface_node, build_interface_node,
     build_using_namespace_nodes_from_interface_node,
 };
+use crate::type_spec::node_builder::model_alias_node::{
+    build_import_lib_nodes_model_alias_node, build_model_alias_node,
+};
 use crate::type_spec::node_builder::model_node::{
     build_import_lib_nodes_from_model_node, build_model_node,
 };
@@ -94,6 +97,24 @@ fn build_content_enum_node(
     }
 }
 
+fn build_content_model_alias_node(
+    mut contents: Vec<openapi_node::OpenAPINode>,
+    _current_file_name: &str,
+    _env: &CompilerEnv,
+) -> BuildContentResult {
+    if let Some(openapi_node::OpenAPINode::DataModel(data_mmodel)) = contents.get(0) {
+        let model_alias = build_model_alias_node(data_mmodel);
+        contents.remove(0);
+
+        (
+            Some(type_spec_node::TypeSpecNode::ModelAlias(model_alias)),
+            contents,
+        )
+    } else {
+        (None, contents)
+    }
+}
+
 fn build_content_interface_node(
     mut contents: Vec<openapi_node::OpenAPINode>,
     current_file_name: &str,
@@ -146,6 +167,7 @@ fn build_content(
         build_content_namespace_node,
         build_content_enum_node,
         build_content_model_node,
+        build_content_model_alias_node,
         build_content_interface_node,
         build_content_unknown_node,
     ]
@@ -201,6 +223,9 @@ pub fn build_import_lib_nodes_from_type_spec_node(
         }
         type_spec_node::TypeSpecNode::Interface(interface_node) => imports.extend(
             build_import_lib_nodes_from_interface_node(interface_node, current_file_path, env),
+        ),
+        type_spec_node::TypeSpecNode::ModelAlias(alias_node) => imports.extend(
+            build_import_lib_nodes_model_alias_node(&alias_node, current_file_path, env),
         ),
         _ => {}
     }

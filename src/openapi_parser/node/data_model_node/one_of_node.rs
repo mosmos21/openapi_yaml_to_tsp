@@ -5,10 +5,11 @@ use yaml_rust::yaml;
 
 #[derive(Debug, Clone)]
 pub struct OneOfNode {
+    pub title: Option<String>,
     pub items: Vec<DataModelNode>,
 }
 
-pub fn build_one_of_node(hash: &yaml::Hash) -> Option<DataModelNode> {
+pub fn build_one_of_node(hash: &yaml::Hash, title: &Option<String>) -> Option<DataModelNode> {
     let items = hash
         .get(&yaml::Yaml::String("oneOf".to_string()))
         .and_then(|yaml| yaml.as_vec());
@@ -25,7 +26,10 @@ pub fn build_one_of_node(hash: &yaml::Hash) -> Option<DataModelNode> {
                 panic!("unexpected oneOf item: {:?}", item);
             }
         }
-        Some(DataModelNode::OneOf(OneOfNode { items }))
+        Some(DataModelNode::OneOf(OneOfNode {
+            title: title.clone(),
+            items,
+        }))
     } else {
         None
     }

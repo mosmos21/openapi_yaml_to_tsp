@@ -81,7 +81,7 @@ fn get_properties(hash: &yaml::Hash) -> Vec<PropertyNode> {
     result
 }
 
-pub fn build_object_node(hash: &yaml::Hash, title: Option<String>) -> Option<DataModelNode> {
+pub fn build_object_node(hash: &yaml::Hash, title: &Option<String>) -> Option<DataModelNode> {
     if Some("object".to_string()) != get_value(hash, "type")
         && !hash.contains_key(&Yaml::String(String::from("properties")))
     {
@@ -102,7 +102,7 @@ pub fn build_object_node(hash: &yaml::Hash, title: Option<String>) -> Option<Dat
     }
 
     Some(DataModelNode::Object(ObjectNode {
-        title: get_value(hash, "title").or(title),
+        title: (title.clone()).or(get_value(hash, "title")),
         properties: Box::new(get_properties(hash)),
         nullable: get_value(hash, "nullable"),
         description: get_value(hash, "description"),

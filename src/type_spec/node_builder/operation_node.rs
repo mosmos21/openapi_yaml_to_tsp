@@ -53,6 +53,7 @@ impl From<&openapi_node::ParameterNode> for type_spec_node::ParameterNode {
                 parameter.name.replace("[]", ""),
                 build_model_content_node(&openapi_node::DataModelNode::Array(
                     openapi_node::ArrayNode {
+                        title: None,
                         items: Box::new(parameter.schema.clone()),
                     },
                 )),

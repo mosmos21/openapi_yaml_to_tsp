@@ -3,10 +3,11 @@ use yaml_rust::yaml;
 
 #[derive(Debug, Clone)]
 pub struct AllOfNode {
+    pub title: Option<String>,
     pub items: Vec<DataModelNode>,
 }
 
-pub fn build_all_of_node(hash: &yaml::Hash) -> Option<DataModelNode> {
+pub fn build_all_of_node(hash: &yaml::Hash, title: &Option<String>) -> Option<DataModelNode> {
     let items = hash
         .get(&yaml::Yaml::String("allOf".to_string()))
         .and_then(|yaml| yaml.as_vec());
@@ -23,7 +24,10 @@ pub fn build_all_of_node(hash: &yaml::Hash) -> Option<DataModelNode> {
                 panic!("unexpected allOf item: {:?}", item);
             }
         }
-        Some(DataModelNode::AllOf(AllOfNode { items }))
+        Some(DataModelNode::AllOf(AllOfNode {
+            title: title.clone(),
+            items,
+        }))
     } else {
         None
     }

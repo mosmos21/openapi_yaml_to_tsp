@@ -18,22 +18,30 @@ pub enum DataModelNode {
 impl DataModelNode {
     pub fn title(&self) -> Option<String> {
         match self {
-            DataModelNode::Array(node) => node.items.title(),
+            DataModelNode::Array(node) => node.title.clone(),
             DataModelNode::Object(node) => node.title.clone(),
-            DataModelNode::OneOf(node) => None,
+            DataModelNode::OneOf(node) => node.title.clone(),
             DataModelNode::String(node) => node.title.clone(),
             DataModelNode::Integer(node) => None,
             DataModelNode::Number(node) => None,
             DataModelNode::Boolean(node) => None,
-            DataModelNode::AllOf(node) => None,
+            DataModelNode::AllOf(node) => node.title.clone(),
             DataModelNode::Ref(node) => None,
         }
     }
 }
 
 pub fn build_data_model_node(hash: &yaml::Hash, title: Option<String>) -> Option<DataModelNode> {
-    if let Some(node) = build_object_node(hash, title) {
-        return Some(node);
+    let builders = vec![
+        build_object_node,
+        build_one_of_node,
+        build_all_of_node,
+        build_array_node,
+    ];
+    for builder in builders {
+        if let Some(node) = builder(hash, &title) {
+            return Some(node);
+        }
     }
 
     let builders = vec![
@@ -41,9 +49,6 @@ pub fn build_data_model_node(hash: &yaml::Hash, title: Option<String>) -> Option
         build_integer_node,
         build_number_node,
         build_boolean_node,
-        build_array_node,
-        build_one_of_node,
-        build_all_of_node,
         build_ref_node,
     ];
     for builder in builders {

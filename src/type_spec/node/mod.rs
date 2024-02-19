@@ -1,9 +1,11 @@
-mod common;
 pub mod decorators;
+
+mod common;
 mod enum_node;
 mod identifier_node;
 mod import_lib_node;
 mod interface_node;
+mod model_alias_node;
 mod model_node;
 mod namespace_node;
 mod operation_node;
@@ -18,6 +20,7 @@ pub use enum_node::*;
 pub use identifier_node::*;
 pub use import_lib_node::*;
 pub use interface_node::*;
+pub use model_alias_node::*;
 pub use model_node::*;
 pub use namespace_node::*;
 pub use operation_node::*;
