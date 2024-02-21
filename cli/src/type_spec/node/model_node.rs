@@ -1,7 +1,8 @@
+use std::fmt::Display;
+
 use crate::type_spec::node::decorators::TypeSpecDecorator;
 use crate::type_spec::node::type_node::TypeNode;
 use crate::type_spec::node::*;
-use std::fmt::Display;
 
 #[derive(Debug)]
 pub struct ModelNode {

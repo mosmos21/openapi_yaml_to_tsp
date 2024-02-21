@@ -1,6 +1,7 @@
+use std::fmt::{format, Debug, Display};
+
 use crate::type_spec::node::decorators::TypeSpecDecorator;
 use crate::type_spec::node::OperationNode;
-use std::fmt::{format, Debug, Display};
 
 pub trait InterfaceDecorator: TypeSpecDecorator {}
 

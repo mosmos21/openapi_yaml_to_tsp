@@ -1,3 +1,7 @@
+use std::path::PathBuf;
+
+use yaml_rust::{yaml, Yaml};
+
 use crate::openapi_parser::common::{check_unexpected_keys, get_value};
 use crate::openapi_parser::node::operation_node::request_body_node::{
     build_request_body_node, RequestBodyNode,
@@ -6,8 +10,6 @@ use crate::openapi_parser::node::operation_node::response_node::{
     build_response_nodes, ResponseNode,
 };
 use crate::openapi_parser::node::*;
-use std::path::PathBuf;
-use yaml_rust::{yaml, Yaml};
 
 #[derive(Debug)]
 pub enum Operation {

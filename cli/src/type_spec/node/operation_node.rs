@@ -1,6 +1,7 @@
+use std::fmt::{Debug, Display};
+
 use crate::type_spec::node::decorators::TypeSpecDecorator;
 use crate::type_spec::node::ModelContentNode;
-use std::fmt::{Debug, Display};
 
 pub trait OperationDecorator: TypeSpecDecorator {}
 

@@ -1,6 +1,7 @@
-use crate::type_spec::node::*;
 use std::fmt::Display;
 use std::path::PathBuf;
+
+use crate::type_spec::node::*;
 
 #[derive(Debug)]
 pub struct TypeSpecFileNode {

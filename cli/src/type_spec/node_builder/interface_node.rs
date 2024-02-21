@@ -1,11 +1,13 @@
+use std::path::PathBuf;
+
+use regex::Regex;
+
 use crate::compiler::CompilerEnv;
 use crate::openapi_parser::node as openapi_node;
 use crate::type_spec::node as type_spec_node;
 use crate::type_spec::node_builder::operation_node::{
     build_import_lib_nodes_from_operation_node, build_operation_node,
 };
-use regex::Regex;
-use std::path::PathBuf;
 
 fn to_pascal_case(s: &str) -> String {
     let s = s.replace("{", "").replace("}", "");

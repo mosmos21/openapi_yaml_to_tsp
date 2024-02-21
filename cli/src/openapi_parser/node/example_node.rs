@@ -1,6 +1,8 @@
-use crate::openapi_parser::node::OpenAPINode;
 use std::path::PathBuf;
+
 use yaml_rust::{yaml, Yaml};
+
+use crate::openapi_parser::node::OpenAPINode;
 
 #[derive(Debug)]
 pub struct ExampleNode {

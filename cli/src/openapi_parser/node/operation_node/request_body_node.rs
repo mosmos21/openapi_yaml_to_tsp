@@ -1,6 +1,7 @@
+use yaml_rust::{yaml, Yaml};
+
 use crate::openapi_parser::node::data_model_node::{build_data_model_node, DataModelNode};
 use crate::openapi_parser::node::operation_node::content_type::ContentType;
-use yaml_rust::{yaml, Yaml};
 
 #[derive(Debug)]
 pub struct RequestBodyNode {

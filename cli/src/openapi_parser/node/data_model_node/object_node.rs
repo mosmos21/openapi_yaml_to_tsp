@@ -1,7 +1,9 @@
+use std::collections::HashSet;
+
+use yaml_rust::{yaml, Yaml};
+
 use crate::openapi_parser::common::{check_unexpected_keys, get_value};
 use crate::openapi_parser::node::data_model_node::{build_data_model_node, DataModelNode};
-use std::collections::HashSet;
-use yaml_rust::{yaml, Yaml};
 
 #[derive(Debug, Clone)]
 pub struct ObjectNode {

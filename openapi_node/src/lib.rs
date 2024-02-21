@@ -1,14 +1,22 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+mod common;
+mod data_model_node;
+mod example_node;
+mod info_node;
+mod metadata_node;
+mod openapi_file_node;
+mod openapi_node;
+mod operation_node;
+mod path_node;
+mod server_node;
+mod tag_node;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub use data_model_node::*;
+pub use example_node::*;
+pub use info_node::*;
+pub use metadata_node::*;
+pub use openapi_file_node::*;
+pub use openapi_node::*;
+pub use operation_node::*;
+pub use path_node::*;
+pub use server_node::*;
+pub use tag_node::*;

@@ -1,8 +1,10 @@
-use crate::openapi_parser::common::{check_unexpected_keys, get_value};
-use crate::openapi_parser::node::data_model_node::data_model_node::DataModelNode;
 use std::fmt::Display;
 use std::str::FromStr;
+
 use yaml_rust::{yaml, Yaml};
+
+use crate::openapi_parser::common::{check_unexpected_keys, get_value};
+use crate::openapi_parser::node::data_model_node::data_model_node::DataModelNode;
 
 #[derive(Debug, Clone)]
 pub struct StringNode {
@@ -88,6 +90,7 @@ fn get_string_enum(hash: &yaml::Hash) -> Option<Vec<String>> {
             .collect()
     })
 }
+
 pub fn build_string_node(hash: &yaml::Hash) -> Option<DataModelNode> {
     if Some("string".to_string()) != get_value(hash, "type") {
         return None;

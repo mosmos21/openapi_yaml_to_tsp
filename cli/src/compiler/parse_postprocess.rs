@@ -1,7 +1,8 @@
-use crate::compiler::FilePathObjectMap;
-use crate::openapi_parser::node::*;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
+
+use crate::compiler::FilePathObjectMap;
+use crate::openapi_parser::node::*;
 
 pub fn remove_examples(file_nodes: &mut Vec<OpenAPIFileNode>) {
     file_nodes.retain(|file_node| {

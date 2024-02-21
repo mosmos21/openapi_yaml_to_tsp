@@ -1,5 +1,6 @@
-use crate::type_spec::node::common::string_literal;
 use std::fmt::Display;
+
+use crate::type_spec::node::common::string_literal;
 
 #[derive(Debug)]
 pub struct EnumNode {

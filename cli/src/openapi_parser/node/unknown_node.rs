@@ -1,6 +1,8 @@
-use crate::openapi_parser::node::OpenAPINode;
 use std::path::PathBuf;
+
 use yaml_rust::yaml;
+
+use crate::openapi_parser::node::OpenAPINode;
 
 pub fn parse_unknown_content(
     hash: yaml::Hash,

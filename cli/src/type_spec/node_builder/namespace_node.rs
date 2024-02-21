@@ -1,8 +1,7 @@
+use super::build_import_lib_nodes_from_type_spec_node;
 use crate::compiler::CompilerEnv;
 use crate::openapi_parser::node as openapi_node;
 use crate::type_spec::node as type_spec_node;
-
-use super::build_import_lib_nodes_from_type_spec_node;
 
 pub fn build_namespace_node(
     info_node: &openapi_node::InfoNode,

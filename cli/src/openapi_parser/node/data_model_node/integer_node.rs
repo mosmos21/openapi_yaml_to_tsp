@@ -1,7 +1,9 @@
+use std::str::FromStr;
+
+use yaml_rust::yaml;
+
 use crate::openapi_parser::common::{check_unexpected_keys, get_value};
 use crate::openapi_parser::node::data_model_node::DataModelNode;
-use std::str::FromStr;
-use yaml_rust::yaml;
 
 #[derive(Debug, Clone)]
 pub struct IntegerNode {

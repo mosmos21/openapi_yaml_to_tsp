@@ -1,8 +1,10 @@
-use crate::openapi_parser::common::{check_unexpected_keys, get_value};
-use crate::openapi_parser::node::*;
 use std::path::PathBuf;
 use std::str::FromStr;
+
 use yaml_rust::{yaml, Yaml};
+
+use crate::openapi_parser::common::{check_unexpected_keys, get_value};
+use crate::openapi_parser::node::*;
 
 #[derive(Debug, Clone)]
 pub struct ParameterNode {

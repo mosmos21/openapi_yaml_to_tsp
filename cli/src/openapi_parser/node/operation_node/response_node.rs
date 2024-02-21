@@ -1,9 +1,11 @@
+use std::collections::HashMap;
+use std::str::FromStr;
+
+use yaml_rust::{yaml, Yaml};
+
 use crate::openapi_parser::common::get_value;
 use crate::openapi_parser::node::data_model_node::{build_data_model_node, DataModelNode};
 use crate::openapi_parser::node::operation_node::content_type::ContentType;
-use std::collections::HashMap;
-use std::str::FromStr;
-use yaml_rust::{yaml, Yaml};
 
 #[derive(Debug)]
 pub struct ResponseNode {

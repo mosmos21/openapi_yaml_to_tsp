@@ -1,3 +1,6 @@
+use std::collections::HashSet;
+use std::path::{Path, PathBuf};
+
 use crate::compiler::CompilerEnv;
 use crate::openapi_parser::node as openapi_node;
 use crate::type_spec::node as type_spec_node;
@@ -5,8 +8,6 @@ use crate::type_spec::node_builder::build_contents;
 use crate::type_spec::node_builder::type_spec_node::{
     build_import_lib_nodes_from_type_spec_node, build_using_namespace_nodes_from_type_spec_node,
 };
-use std::collections::HashSet;
-use std::path::{Path, PathBuf};
 
 fn build_import_and_name_spaces(
     contents: &Vec<type_spec_node::TypeSpecNode>,

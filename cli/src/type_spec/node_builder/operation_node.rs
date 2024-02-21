@@ -1,3 +1,7 @@
+use std::path::PathBuf;
+
+use log::warn;
+
 use crate::compiler::CompilerEnv;
 use crate::openapi_parser::{node as openapi_node, ParameterPosition};
 use crate::type_spec::node as type_spec_node;
@@ -5,8 +9,6 @@ use crate::type_spec::node::OperationDecorator;
 use crate::type_spec::node_builder::model_node::{
     build_import_lib_nodes_from_model_content_node, build_model_content_node,
 };
-use log::warn;
-use std::path::PathBuf;
 
 impl From<&openapi_node::Operation> for type_spec_node::decorators::MethodDecoratorNode {
     fn from(operation: &openapi_node::Operation) -> Self {

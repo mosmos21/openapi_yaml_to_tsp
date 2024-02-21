@@ -15,6 +15,8 @@ mod type_spec_node;
 mod union_node;
 mod using_namespace_node;
 
+use std::fmt::Debug;
+
 use common::*;
 pub use enum_node::*;
 pub use identifier_node::*;
@@ -24,7 +26,6 @@ pub use model_alias_node::*;
 pub use model_node::*;
 pub use namespace_node::*;
 pub use operation_node::*;
-use std::fmt::Debug;
 pub use type_node::*;
 pub use type_spec_file_node::*;
 pub use type_spec_node::*;

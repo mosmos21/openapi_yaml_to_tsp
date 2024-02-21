@@ -1,7 +1,8 @@
+use std::fmt::Display;
+
 use crate::type_spec::node::common::string_literal;
 use crate::type_spec::node::decorators::{LibInfo, TypeSpecDecorator};
 use crate::type_spec::node::InterfaceDecorator;
-use std::fmt::Display;
 
 #[derive(Debug)]
 pub struct RouteDecoratorNode {

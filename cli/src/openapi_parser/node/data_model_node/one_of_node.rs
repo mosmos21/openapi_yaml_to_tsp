@@ -1,7 +1,8 @@
+use yaml_rust::yaml;
+
 use crate::openapi_parser::node::data_model_node::data_model_node::{
     build_data_model_node, DataModelNode,
 };
-use yaml_rust::yaml;
 
 #[derive(Debug, Clone)]
 pub struct OneOfNode {

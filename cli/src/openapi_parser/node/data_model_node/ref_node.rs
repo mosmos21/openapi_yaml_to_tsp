@@ -1,5 +1,6 @@
-use crate::openapi_parser::node::data_model_node::DataModelNode;
 use yaml_rust::{yaml, Yaml};
+
+use crate::openapi_parser::node::data_model_node::DataModelNode;
 
 #[derive(Debug, Clone)]
 pub enum RefNode {

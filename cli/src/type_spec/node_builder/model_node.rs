@@ -1,9 +1,11 @@
+use std::path::{Path, PathBuf};
+
+use pathdiff::diff_paths;
+
 use crate::compiler::CompilerEnv;
 use crate::openapi_parser::{build_data_model_node, node as openapi_node, ComponentRefNode};
 use crate::type_spec::node as type_spec_node;
 use crate::type_spec::node::IdentifierNode;
-use pathdiff::diff_paths;
-use std::path::{Path, PathBuf};
 
 fn build_array_node(array: &openapi_node::ArrayNode) -> type_spec_node::ModelContentNode {
     type_spec_node::ModelContentNode::Array(type_spec_node::ArrayModelNode {

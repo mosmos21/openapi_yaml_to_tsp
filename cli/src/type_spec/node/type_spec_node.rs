@@ -1,6 +1,7 @@
+use std::fmt::Display;
+
 use crate::type_spec::node::enum_node::EnumNode;
 use crate::type_spec::node::*;
-use std::fmt::Display;
 
 #[derive(Debug)]
 pub enum TypeSpecNode {

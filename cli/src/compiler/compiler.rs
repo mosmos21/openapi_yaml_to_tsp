@@ -1,13 +1,15 @@
-use crate::type_spec::node::TypeSpecFileNode;
-use crate::{
-    compiler::parse_postprocess, openapi_parser::node::*, openapi_parser::parse_yaml_files,
-    type_spec::node_builder::build_type_spec_file_node, yaml_loader::load_yaml,
-};
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::fs::{self, File};
 use std::io::Write;
 use std::path::{Path, PathBuf};
+
+use crate::compiler::parse_postprocess;
+use crate::openapi_parser::node::*;
+use crate::openapi_parser::parse_yaml_files;
+use crate::type_spec::node::TypeSpecFileNode;
+use crate::type_spec::node_builder::build_type_spec_file_node;
+use crate::yaml_loader::load_yaml;
 
 pub type FilePathObjectMap = HashMap<String, DataModelNode>;
 

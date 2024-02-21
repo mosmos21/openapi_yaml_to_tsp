@@ -1,7 +1,8 @@
-use crate::type_spec::node::decorators::{LibInfo, TypeSpecDecorator};
-use crate::type_spec::node::*;
 use std::collections::HashMap;
 use std::fmt::Display;
+
+use crate::type_spec::node::decorators::{LibInfo, TypeSpecDecorator};
+use crate::type_spec::node::*;
 
 fn hash_map_to_string(map: &HashMap<String, String>) -> String {
     let properties = map

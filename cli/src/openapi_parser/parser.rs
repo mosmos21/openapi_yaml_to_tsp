@@ -1,11 +1,13 @@
+use std::path::PathBuf;
+
+use yaml_rust::yaml;
+
 use crate::openapi_parser::node::{
     parse_data_model_content, parse_data_models_content, parse_example_content, parse_info_content,
     parse_metadata_content, parse_operation_content, parse_parameters_content, parse_paths_content,
     parse_servers_content, parse_tags_content, parse_unknown_content, OpenAPIFileNode, OpenAPINode,
 };
 use crate::yaml_loader::YamlFile;
-use std::path::PathBuf;
-use yaml_rust::yaml;
 
 fn parse_content(hash: yaml::Hash, path: &PathBuf) -> (Option<Vec<OpenAPINode>>, yaml::Hash) {
     vec![

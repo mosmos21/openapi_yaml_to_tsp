@@ -1,10 +1,9 @@
 use std::path::PathBuf;
 
+use super::model_node::{build_import_lib_nodes_from_model_content_node, build_model_content_node};
 use crate::compiler::CompilerEnv;
 use crate::openapi_parser::node as openapi_node;
 use crate::type_spec::node::{self as type_spec_node, IdentifierNode};
-
-use super::model_node::{build_import_lib_nodes_from_model_content_node, build_model_content_node};
 
 pub fn build_model_alias_node(
     data_mode_node: &openapi_node::DataModelNode,

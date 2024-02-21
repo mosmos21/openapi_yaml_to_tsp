@@ -1,5 +1,6 @@
-use crate::type_spec::node::{IdentifierNode, ModelContentNode};
 use std::fmt::Display;
+
+use crate::type_spec::node::{IdentifierNode, ModelContentNode};
 
 #[derive(Debug)]
 pub struct ModelAliasNode {

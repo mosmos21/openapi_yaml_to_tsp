@@ -1,6 +1,7 @@
+use std::fmt::Display;
+
 use crate::type_spec::node::decorators::{LibInfo, TypeSpecDecorator};
 use crate::type_spec::node::{ParameterDecorator, RecordPropertyDecorator};
-use std::fmt::Display;
 
 #[derive(Debug)]
 pub struct PathDecorator;
